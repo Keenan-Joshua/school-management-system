@@ -26,3 +26,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.iml
+
+# HTTP test files
+*.http
