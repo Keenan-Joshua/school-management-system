@@ -51,6 +51,13 @@ function Dashboard() {
                         <p className="text-2xl mb-2">👩‍🏫</p>
                         <p className="font-medium text-gray-700">Teacher Management</p>
                     </Link>
+                    <Link
+                        to="/attendance"
+                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                    >
+                        <p className="text-2xl mb-2">📋</p>
+                        <p className="font-medium text-gray-700">Attendance Tracking</p>
+                    </Link>
                 </div>
 
             </div>
