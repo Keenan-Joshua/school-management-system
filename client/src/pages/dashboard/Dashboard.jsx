@@ -44,6 +44,13 @@ function Dashboard() {
                         <p className="text-2xl mb-2">🎓</p>
                         <p className="font-medium text-gray-700">Student Registration</p>
                     </Link>
+                    <Link
+                        to="/teachers"
+                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                    >
+                        <p className="text-2xl mb-2">👩‍🏫</p>
+                        <p className="font-medium text-gray-700">Teacher Management</p>
+                    </Link>
                 </div>
 
             </div>
