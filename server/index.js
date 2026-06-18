@@ -7,6 +7,7 @@ const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
+const announcementRoutes = require('./routes/announcementRoutes');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/grades', gradeRoutes);
+app.use('/api/announcements', announcementRoutes);
 
 app.get('/', (req, res) => res.send('SMS API running'));
 
