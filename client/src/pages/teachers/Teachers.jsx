@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import TeacherForm from './TeacherForm';
+import ClassAssignment from './ClassAssignment';
 
 function Teachers() {
     const [teachers, setTeachers] = useState([]);
@@ -135,6 +136,7 @@ function Teachers() {
                     </tbody>
                 </table>
             </div>
+            {isAdmin && <ClassAssignment />}
         </div>
     );
 }

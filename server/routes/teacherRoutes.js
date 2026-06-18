@@ -7,14 +7,18 @@ const {
     createTeacher,
     updateTeacher,
     deleteTeacher,
+    getClasses,
+    assignTeacherToClass,
 } = require('../controllers/teacherController');
 
 router.use(verifyToken);
 
 router.get('/', getAllTeachers);
+router.get('/classes', getClasses);
 router.get('/:id', getTeacherById);
 router.post('/', verifyRole('administrator'), createTeacher);
 router.put('/:id', verifyRole('administrator'), updateTeacher);
 router.delete('/:id', verifyRole('administrator'), deleteTeacher);
+router.put('/classes/:class_id/assign', verifyRole('administrator'), assignTeacherToClass);
 
 module.exports = router;
