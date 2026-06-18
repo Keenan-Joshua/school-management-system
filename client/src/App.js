@@ -4,6 +4,7 @@ import Dashboard from './pages/dashboard/Dashboard';
 import Students from './pages/students/Students';
 import Teachers from './pages/teachers/Teachers';
 import Attendance from './pages/attendance/Attendance';
+import Grades from './pages/grades/Grades';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -33,6 +34,11 @@ function App() {
           <Route path="/attendance" element={
               <PrivateRoute>
                   <Attendance />
+              </PrivateRoute>
+          } />
+          <Route path="/grades" element={
+              <PrivateRoute>
+                  <Grades />
               </PrivateRoute>
           } />
           <Route path="*" element={<Navigate to="/login" />} />
