@@ -9,6 +9,7 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
 const announcementRoutes = require('./routes/announcementRoutes');
 const parentRoutes = require('./routes/parentRoutes');
+const holidayRoutes = require('./routes/holidayRoutes');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/parents', parentRoutes);
+app.use('/api/holidays', holidayRoutes);
 
 app.get('/', (req, res) => res.send('SMS API running'));
 

@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { isNonSchoolDay } = require('./holidayController');
 
 // Get the class assigned to the logged in teacher
 const getTeacherClass = async (req, res) => {
@@ -30,6 +31,14 @@ const getAttendanceByClassAndDate = async (req, res) => {
     }
 
     try {
+        const check = await isNonSchoolDay(date);
+        if (check.blocked) {
+            return res.json({
+                students: [],
+                alreadySubmitted: false,
+                nonSchoolDay: check.reason,
+            });
+        }
         // Get all students in the class
         const [students] = await db.query(`
       SELECT s.id, s.full_name, s.admission_number
@@ -73,6 +82,11 @@ const submitAttendance = async (req, res) => {
     }
 
     try {
+        // Block submission on weekends and holidays
+        const check = await isNonSchoolDay(date);
+        if (check.blocked) {
+            return res.status(400).json({ message: `Cannot record attendance. ${check.reason}` });
+        }
         // Get teacher id from logged in user
         const [teacherRows] = await db.query(`
       SELECT t.id FROM teachers t

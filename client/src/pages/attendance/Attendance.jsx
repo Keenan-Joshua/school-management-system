@@ -76,6 +76,14 @@ function Attendance() {
                 const res = await api.get('/attendance/class', {
                     params: { class_id: selectedClass, date: selectedDate },
                 });
+
+                if (res.data.nonSchoolDay) {
+                    setStudents([]);
+                    setError(res.data.nonSchoolDay);
+                    setAlreadySubmitted(false);
+                    return;
+                }
+
                 // Default unrecorded students to 'present'
                 const withDefaults = res.data.students.map(s => ({
                     ...s,

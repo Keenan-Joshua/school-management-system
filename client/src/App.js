@@ -9,6 +9,7 @@ import Attendance from './pages/attendance/Attendance';
 import Grades from './pages/grades/Grades';
 import Announcements from './pages/announcements/Announcements';
 import Users from './pages/users/Users';
+import Holidays from './pages/holidays/Holidays';
 
 const PrivateRoute = ({ children, allowedRoles }) => {
     const token = localStorage.getItem('token');
@@ -74,6 +75,12 @@ function App() {
                 <Route path="/announcements" element={
                     <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']}>
                         <Announcements />
+                    </PrivateRoute>
+                } />
+
+                <Route path="/holidays" element={
+                    <PrivateRoute allowedRoles={['administrator']}>
+                        <Holidays />
                     </PrivateRoute>
                 } />
 
