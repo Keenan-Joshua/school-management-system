@@ -8,7 +8,10 @@ function Grades() {
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
     const isTeacher = user?.role === 'teacher';
+    const isParent = user?.role === 'parent';
 
+    const [children, setChildren] = useState([]);
+    const [selectedChild, setSelectedChild] = useState('');
     const [classes, setClasses] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [selectedClass, setSelectedClass] = useState('');
@@ -35,13 +38,17 @@ function Grades() {
                     const classRes = await api.get('/attendance/teacher-class');
                     setSelectedClass(classRes.data.id);
                     setClasses([classRes.data]);
+                } else if (isParent) {
+                    const childRes = await api.get('/parents/my-children');
+                    setChildren(childRes.data);
+                    if (childRes.data.length > 0) setSelectedChild(childRes.data[0].id);
                 }
             } catch (err) {
                 setError('Failed to load initial data.');
             }
         };
         loadInitial();
-    }, [isAdmin, isTeacher]);
+    }, [isAdmin, isTeacher, isParent]);
 
     useEffect(() => {
         if (!selectedClass || !selectedSubject || !selectedTerm || !selectedYear) return;
@@ -122,6 +129,65 @@ function Grades() {
         <div className="p-8">
             <BackButton />
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Grades and Report Cards</h2>
+
+            {isParent ? (
+                <div>
+                    {children.length === 0 ? (
+                        <p className="text-gray-400 text-sm">No children linked to your account yet. Contact the school administrator.</p>
+                    ) : (
+                        <>
+                            <div className="flex flex-wrap gap-4 mb-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Child</label>
+                                    <select
+                                        value={selectedChild}
+                                        onChange={e => setSelectedChild(e.target.value)}
+                                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        {children.map(c => (
+                                            <option key={c.id} value={c.id}>{c.full_name} — {c.class_name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Term</label>
+                                    <select
+                                        value={selectedTerm}
+                                        onChange={e => setSelectedTerm(e.target.value)}
+                                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option>Term 1</option>
+                                        <option>Term 2</option>
+                                        <option>Term 3</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                                    <input
+                                        type="number"
+                                        value={selectedYear}
+                                        onChange={e => setSelectedYear(e.target.value)}
+                                        min="2020"
+                                        max="2099"
+                                        className="border border-gray-300 rounded px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setViewReportCard(children.find(c => c.id === parseInt(selectedChild)))}
+                                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-sm"
+                            >
+                                View Report Card
+                            </button>
+                        </>
+                    )}
+                </div>
+            ) : (
+                <>
+                {/* existing admin/teacher JSX continues below unchanged */}
 
             {isAdmin && (
                 <SubjectManager
@@ -280,6 +346,8 @@ function Grades() {
                         </div>
                     )}
                 </>
+            )}
+        </>
             )}
 
             {viewReportCard && (

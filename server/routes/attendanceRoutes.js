@@ -6,6 +6,7 @@ const {
     submitAttendance,
     getAttendanceByStudent,
     getTeacherClass,
+    getAttendanceForParent,
 } = require('../controllers/attendanceController');
 
 router.use(verifyToken);
@@ -13,6 +14,7 @@ router.use(verifyToken);
 router.get('/teacher-class', verifyRole('teacher'), getTeacherClass);
 router.get('/class', verifyRole('administrator', 'teacher'), getAttendanceByClassAndDate);
 router.get('/student/:student_id', getAttendanceByStudent);
+router.get('/parent/:student_id', verifyRole('parent'), getAttendanceForParent);
 router.post('/submit', verifyRole('teacher'), submitAttendance);
 
 module.exports = router;

@@ -136,9 +136,37 @@ const getAttendanceByStudent = async (req, res) => {
     }
 };
 
+// Get attendance for a student, but only if the requesting parent is linked to them
+const getAttendanceForParent = async (req, res) => {
+    const { student_id } = req.params;
+
+    try {
+        const [link] = await db.query(
+            'SELECT id FROM parent_students WHERE parent_user_id = ? AND student_id = ?',
+            [req.user.id, student_id]
+        );
+        if (link.length === 0) {
+            return res.status(403).json({ message: 'You are not linked to this student.' });
+        }
+
+        const [rows] = await db.query(`
+      SELECT a.date, a.status, c.name AS class_name
+      FROM attendance a
+      JOIN classes c ON a.class_id = c.id
+      WHERE a.student_id = ?
+      ORDER BY a.date DESC
+    `, [student_id]);
+
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     getTeacherClass,
     getAttendanceByClassAndDate,
     submitAttendance,
     getAttendanceByStudent,
+    getAttendanceForParent,
 };

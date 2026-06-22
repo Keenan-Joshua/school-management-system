@@ -11,7 +11,12 @@ function ReportCard({ student, term, year, onClose }) {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const res = await api.get(`/grades/report-card/${student.id}`, {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const endpoint = user?.role === 'parent'
+                    ? `/grades/parent/report-card/${student.id}`
+                    : `/grades/report-card/${student.id}`;
+
+                const res = await api.get(endpoint, {
                     params: { term, year },
                 });
                 setReportData(res.data);

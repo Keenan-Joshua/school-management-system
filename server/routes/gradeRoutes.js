@@ -8,6 +8,7 @@ const {
     getGradesByClassTermYear,
     submitGrades,
     getReportCard,
+    getReportCardForParent,
 } = require('../controllers/gradeController');
 
 router.use(verifyToken);
@@ -17,6 +18,7 @@ router.post('/subjects', verifyRole('administrator'), createSubject);
 router.delete('/subjects/:id', verifyRole('administrator'), deleteSubject);
 router.get('/class', verifyRole('administrator', 'teacher'), getGradesByClassTermYear);
 router.post('/submit', verifyRole('teacher'), submitGrades);
+router.get('/parent/report-card/:student_id', verifyRole('parent'), getReportCardForParent);
 router.get('/report-card/:student_id', getReportCard);
 
 module.exports = router;

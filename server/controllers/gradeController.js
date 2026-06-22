@@ -174,6 +174,44 @@ const getReportCard = async (req, res) => {
     }
 };
 
+// Get report card for a student, but only if the requesting parent is linked to them
+const getReportCardForParent = async (req, res) => {
+    const { student_id } = req.params;
+    const { term, year } = req.query;
+
+    if (!term || !year)
+        return res.status(400).json({ message: 'term and year are required.' });
+
+    try {
+        const [link] = await db.query(
+            'SELECT id FROM parent_students WHERE parent_user_id = ? AND student_id = ?',
+            [req.user.id, student_id]
+        );
+        if (link.length === 0) {
+            return res.status(403).json({ message: 'You are not linked to this student.' });
+        }
+
+        const [studentRows] = await db.query(`
+      SELECT s.*, c.name AS class_name
+      FROM students s
+      LEFT JOIN classes c ON s.class_id = c.id
+      WHERE s.id = ?
+    `, [student_id]);
+
+        const [grades] = await db.query(`
+      SELECT g.*, sub.name AS subject_name
+      FROM grades g
+      JOIN subjects sub ON g.subject_id = sub.id
+      WHERE g.student_id = ? AND g.term = ? AND g.year = ?
+      ORDER BY sub.name ASC
+    `, [student_id, term, year]);
+
+        res.json({ student: studentRows[0], grades });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     getAllSubjects,
     createSubject,
@@ -181,4 +219,5 @@ module.exports = {
     getGradesByClassTermYear,
     submitGrades,
     getReportCard,
+    getReportCardForParent,
 };

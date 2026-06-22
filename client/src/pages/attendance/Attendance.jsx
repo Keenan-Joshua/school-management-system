@@ -6,6 +6,7 @@ function Attendance() {
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
     const isTeacher = user?.role === 'teacher';
+    const isParent = user?.role === 'parent';
 
     const [classes, setClasses] = useState([]);
     const [selectedClass, setSelectedClass] = useState('');
@@ -18,6 +19,9 @@ function Attendance() {
     const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [children, setChildren] = useState([]);
+    const [selectedChild, setSelectedChild] = useState('');
+    const [parentAttendance, setParentAttendance] = useState([]);
 
     // Load classes for admin, or assigned class for teacher
     useEffect(() => {
@@ -30,13 +34,35 @@ function Attendance() {
                     const res = await api.get('/attendance/teacher-class');
                     setSelectedClass(res.data.id);
                     setClasses([res.data]);
+                } else if (isParent) {
+                    const res = await api.get('/parents/my-children');
+                    setChildren(res.data);
+                    if (res.data.length > 0) setSelectedChild(res.data[0].id);
                 }
             } catch (err) {
-                setError(err.response?.data?.message || 'Failed to load class.');
+                setError(err.response?.data?.message || 'Failed to load data.');
             }
         };
         loadClasses();
-    }, [isAdmin, isTeacher]);
+    }, [isAdmin, isTeacher, isParent]);
+
+    useEffect(() => {
+        if (!isParent || !selectedChild) return;
+
+        const loadParentAttendance = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const res = await api.get(`/attendance/parent/${selectedChild}`);
+                setParentAttendance(res.data);
+            } catch (err) {
+                setError('Failed to load attendance.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadParentAttendance();
+    }, [isParent, selectedChild]);
 
     // Load students when class or date changes
     useEffect(() => {
@@ -150,6 +176,20 @@ function Attendance() {
                         className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
+                {isParent && children.length > 0 && (
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Child</label>
+                        <select
+                            value={selectedChild}
+                            onChange={e => setSelectedChild(e.target.value)}
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {children.map(c => (
+                                <option key={c.id} value={c.id}>{c.full_name} — {c.class_name}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
             </div>
 
             {message && (
@@ -169,8 +209,46 @@ function Attendance() {
                 </div>
             )}
 
-            {/* Attendance Table */}
-            {loading ? (
+            {isParent ? (
+                loading ? (
+                    <p className="text-gray-500 text-sm">Loading attendance...</p>
+                ) : children.length === 0 ? (
+                    <p className="text-gray-400 text-sm">No children linked to your account yet. Contact the school administrator.</p>
+                ) : (
+                    <div className="overflow-x-auto bg-white rounded-lg shadow">
+                        <table className="min-w-full text-sm">
+                            <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th className="px-4 py-3 text-left">Date</th>
+                                <th className="px-4 py-3 text-left">Class</th>
+                                <th className="px-4 py-3 text-left">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                            {parentAttendance.length === 0 ? (
+                                <tr>
+                                    <td colSpan="3" className="px-4 py-6 text-center text-gray-400">
+                                        No attendance records found.
+                                    </td>
+                                </tr>
+                            ) : (
+                                parentAttendance.map((record, idx) => (
+                                    <tr key={idx} className="hover:bg-gray-50">
+                                        <td className="px-4 py-3">{new Date(record.date).toLocaleDateString()}</td>
+                                        <td className="px-4 py-3">{record.class_name}</td>
+                                        <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${statusColor(record.status)}`}>
+                          {record.status}
+                        </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                            </tbody>
+                        </table>
+                    </div>
+                )
+            ) : loading ? (
                 <p className="text-gray-500 text-sm">Loading students...</p>
             ) : students.length === 0 ? (
                 <p className="text-gray-400 text-sm">

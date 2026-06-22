@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import ParentLinker from './ParentLinker';
 
 function StudentForm({ student, onClose }) {
     const [classes, setClasses] = useState([]);
@@ -137,6 +138,7 @@ function StudentForm({ student, onClose }) {
                         </button>
                     </div>
                 </form>
+                {student && <ParentLinker studentId={student.id} />}
             </div>
         </div>
     );
