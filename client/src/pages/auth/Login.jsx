@@ -21,7 +21,11 @@ function Login() {
             const res = await axios.post('http://localhost:5000/api/auth/login', formData);
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
-            navigate('/dashboard');
+            if (res.data.user.force_password_reset) {
+                navigate('/force-password-reset');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please try again.');
         } finally {
@@ -82,6 +86,10 @@ function Login() {
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
+                <p className="text-center text-sm text-gray-500 mt-4">
+                    Setting up the system for the first time?{' '}
+                    <a href="/register" className="text-blue-600 hover:underline">Register here</a>
+                </p>
             </div>
         </div>
     );

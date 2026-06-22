@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import StudentForm from './StudentForm';
+import BackButton from '../../components/BackButton';
 
 function Students() {
     const [students, setStudents] = useState([]);
@@ -54,6 +55,7 @@ function Students() {
 
     return (
         <div className="p-8">
+            <BackButton />
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">Student Registration</h2>
                 {isAdmin && (

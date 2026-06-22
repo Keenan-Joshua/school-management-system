@@ -3,6 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 function Dashboard() {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = user?.role === 'administrator';
+    const isTeacher = user?.role === 'teacher';
+    const isParent = user?.role === 'parent';
+
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -37,41 +41,64 @@ function Dashboard() {
 
                 {/* Module navigation cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                    <Link
-                        to="/students"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
-                    >
-                        <p className="text-2xl mb-2">🎓</p>
-                        <p className="font-medium text-gray-700">Student Registration</p>
-                    </Link>
-                    <Link
-                        to="/teachers"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
-                    >
-                        <p className="text-2xl mb-2">👩‍🏫</p>
-                        <p className="font-medium text-gray-700">Teacher Management</p>
-                    </Link>
-                    <Link
-                        to="/attendance"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
-                    >
-                        <p className="text-2xl mb-2">📋</p>
-                        <p className="font-medium text-gray-700">Attendance Tracking</p>
-                    </Link>
-                    <Link
-                        to="/grades"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
-                    >
-                        <p className="text-2xl mb-2">📝</p>
-                        <p className="font-medium text-gray-700">Grades & Report Cards</p>
-                    </Link>
-                    <Link
-                        to="/announcements"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
-                    >
-                        <p className="text-2xl mb-2">📢</p>
-                        <p className="font-medium text-gray-700">Announcements</p>
-                    </Link>
+                    {isAdmin && (
+                        <Link
+                            to="/users"
+                            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                        >
+                            <p className="text-2xl mb-2">🔑</p>
+                            <p className="font-medium text-gray-700">User Accounts</p>
+                        </Link>
+                    )}
+                    {(isAdmin || isTeacher) && (
+                        <Link
+                            to="/students"
+                            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                        >
+                            <p className="text-2xl mb-2">🎓</p>
+                            <p className="font-medium text-gray-700">Student Registration</p>
+                        </Link>
+                    )}
+
+                    {isAdmin && (
+                        <Link
+                            to="/teachers"
+                            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                        >
+                            <p className="text-2xl mb-2">👩‍🏫</p>
+                            <p className="font-medium text-gray-700">Teacher Management</p>
+                        </Link>
+                    )}
+
+                    {(isAdmin || isTeacher || isParent) && (
+                        <Link
+                            to="/attendance"
+                            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                        >
+                            <p className="text-2xl mb-2">📋</p>
+                            <p className="font-medium text-gray-700">Attendance Tracking</p>
+                        </Link>
+                    )}
+
+                    {(isAdmin || isTeacher || isParent) && (
+                        <Link
+                            to="/grades"
+                            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                        >
+                            <p className="text-2xl mb-2">📝</p>
+                            <p className="font-medium text-gray-700">Grades & Report Cards</p>
+                        </Link>
+                    )}
+
+                    {(isAdmin || isTeacher || isParent) && (
+                        <Link
+                            to="/announcements"
+                            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition text-center"
+                        >
+                            <p className="text-2xl mb-2">📢</p>
+                            <p className="font-medium text-gray-700">Announcements</p>
+                        </Link>
+                    )}
                 </div>
 
             </div>

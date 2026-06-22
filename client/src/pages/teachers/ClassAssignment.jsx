@@ -32,8 +32,8 @@ function ClassAssignment() {
         setError('');
 
         try {
-            await api.put(`/teachers/classes/${class_id}/assign`, { teacher_id });
-            setMessage('Class teacher assigned successfully.');
+            const res = await api.put(`/teachers/classes/${class_id}/assign`, { teacher_id });
+            setMessage(res.data.message);
             fetchData();
         } catch (err) {
             setError(err.response?.data?.message || 'Assignment failed.');
@@ -78,7 +78,7 @@ function ClassAssignment() {
                             <td className="px-4 py-3">
                                 <div className="flex items-center gap-2">
                                     <select
-                                        defaultValue={cls.teacher_id || ''}
+                                        value={cls.teacher_id || ''}
                                         onChange={e => handleAssign(cls.id, e.target.value)}
                                         disabled={saving === cls.id}
                                         className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

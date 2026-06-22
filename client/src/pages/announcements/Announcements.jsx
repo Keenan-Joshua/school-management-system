@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import AnnouncementForm from './AnnouncementForm';
+import BackButton from '../../components/BackButton';
 
 function Announcements() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -57,6 +58,7 @@ function Announcements() {
 
     return (
         <div className="p-8">
+            <BackButton />
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">School Announcements</h2>
                 {isAdmin && (

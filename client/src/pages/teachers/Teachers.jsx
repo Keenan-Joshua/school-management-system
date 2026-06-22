@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import TeacherForm from './TeacherForm';
 import ClassAssignment from './ClassAssignment';
+import BackButton from "../../components/BackButton";
 
 function Teachers() {
     const [teachers, setTeachers] = useState([]);
@@ -56,6 +57,7 @@ function Teachers() {
 
     return (
         <div className="p-8">
+            <BackButton />
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">Teacher Management</h2>
                 {isAdmin && (

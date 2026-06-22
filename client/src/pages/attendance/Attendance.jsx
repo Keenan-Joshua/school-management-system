@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import BackButton from '../../components/BackButton';
 
 function Attendance() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -110,6 +111,7 @@ function Attendance() {
 
     return (
         <div className="p-8">
+            <BackButton />
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Attendance Tracking</h2>
 
             {/* Filters */}

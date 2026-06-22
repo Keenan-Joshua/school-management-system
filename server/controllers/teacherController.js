@@ -108,24 +108,33 @@ const assignTeacherToClass = async (req, res) => {
     const { teacher_id } = req.body;
     const { class_id } = req.params;
 
+    // Treat empty string as unassign
+    const normalizedTeacherId = teacher_id === '' ? null : teacher_id;
+
     try {
-        // Check if teacher is already assigned to another class
-        const [existing] = await db.query(
-            'SELECT id, name FROM classes WHERE teacher_id = ? AND id != ?',
-            [teacher_id, class_id]
-        );
-        if (existing.length > 0) {
-            return res.status(400).json({
-                message: `This teacher is already assigned to ${existing[0].name}.`
-            });
+        if (normalizedTeacherId !== null) {
+            // Check if teacher is already assigned to another class
+            const [existing] = await db.query(
+                'SELECT id, name FROM classes WHERE teacher_id = ? AND id != ?',
+                [normalizedTeacherId, class_id]
+            );
+            if (existing.length > 0) {
+                return res.status(400).json({
+                    message: `This teacher is already assigned to ${existing[0].name}.`
+                });
+            }
         }
 
         await db.query(
             'UPDATE classes SET teacher_id = ? WHERE id = ?',
-            [teacher_id, class_id]
+            [normalizedTeacherId, class_id]
         );
 
-        res.json({ message: 'Teacher assigned to class successfully.' });
+        res.json({
+            message: normalizedTeacherId
+                ? 'Teacher assigned to class successfully.'
+                : 'Teacher unassigned successfully.'
+        });
     } catch (err) {
         res.status(500).json({ message: 'Server error.', error: err.message });
     }

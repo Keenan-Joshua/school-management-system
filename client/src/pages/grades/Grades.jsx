@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import SubjectManager from './SubjectManager';
 import ReportCard from './ReportCard';
+import BackButton from '../../components/BackButton';
 
 function Grades() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -119,6 +120,7 @@ function Grades() {
 
     return (
         <div className="p-8">
+            <BackButton />
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Grades and Report Cards</h2>
 
             {isAdmin && (
