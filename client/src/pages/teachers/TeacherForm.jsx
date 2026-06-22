@@ -7,7 +7,6 @@ function TeacherForm({ teacher, onClose }) {
         email: '',
         phone: '',
         gender: '',
-        specialisation: '',
         date_joined: '',
     });
     const [error, setError] = useState('');
@@ -20,7 +19,6 @@ function TeacherForm({ teacher, onClose }) {
                 email: teacher.email,
                 phone: teacher.phone,
                 gender: teacher.gender,
-                specialisation: teacher.specialisation,
                 date_joined: teacher.date_joined?.split('T')[0],
             });
         }
@@ -67,7 +65,6 @@ function TeacherForm({ teacher, onClose }) {
                         { label: 'Full Name', name: 'full_name', type: 'text' },
                         { label: 'Email', name: 'email', type: 'email' },
                         { label: 'Phone Number', name: 'phone', type: 'text' },
-                        { label: 'Specialisation', name: 'specialisation', type: 'text' },
                         { label: 'Date Joined', name: 'date_joined', type: 'date' },
                     ].map(field => (
                         <div key={field.name}>

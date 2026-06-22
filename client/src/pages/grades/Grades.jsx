@@ -14,6 +14,7 @@ function Grades() {
     const [selectedChild, setSelectedChild] = useState('');
     const [classes, setClasses] = useState([]);
     const [subjects, setSubjects] = useState([]);
+    const [teacherAssignments, setTeacherAssignments] = useState([]);
     const [selectedClass, setSelectedClass] = useState('');
     const [selectedSubject, setSelectedSubject] = useState('');
     const [selectedTerm, setSelectedTerm] = useState('Term 1');
@@ -35,9 +36,8 @@ function Grades() {
                     const classRes = await api.get('/teachers/classes');
                     setClasses(classRes.data);
                 } else if (isTeacher) {
-                    const classRes = await api.get('/attendance/teacher-class');
-                    setSelectedClass(classRes.data.id);
-                    setClasses([classRes.data]);
+                    const assignmentRes = await api.get('/teacher-subjects/mine');
+                    setTeacherAssignments(assignmentRes.data);
                 } else if (isParent) {
                     const childRes = await api.get('/parents/my-children');
                     setChildren(childRes.data);
@@ -214,28 +214,43 @@ function Grades() {
                     </div>
                 )}
 
-                {isTeacher && classes.length > 0 && (
+                {isTeacher ? (
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Class</label>
-                        <p className="border border-gray-200 bg-gray-50 rounded px-3 py-2 text-sm text-gray-700">
-                            {classes[0].name}
-                        </p>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Class & Subject</label>
+                        <select
+                            value={selectedClass && selectedSubject ? `${selectedClass}-${selectedSubject}` : ''}
+                            onChange={e => {
+                                const [class_id, subject_id] = e.target.value.split('-');
+                                setSelectedClass(class_id);
+                                setSelectedSubject(subject_id);
+                            }}
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select class & subject</option>
+                            {teacherAssignments.map(a => (
+                                <option key={a.id} value={`${a.class_id}-${a.subject_id}`}>
+                                    {a.class_name} — {a.subject_name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+                ) : (
+                    <>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                            <select
+                                value={selectedSubject}
+                                onChange={e => setSelectedSubject(e.target.value)}
+                                className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">Select subject</option>
+                                {subjects.map(s => (
+                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </>
                 )}
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                    <select
-                        value={selectedSubject}
-                        onChange={e => setSelectedSubject(e.target.value)}
-                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">Select subject</option>
-                        {subjects.map(s => (
-                            <option key={s.id} value={s.id}>{s.name}</option>
-                        ))}
-                    </select>
-                </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Term</label>

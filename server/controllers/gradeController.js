@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { isTeacherAssignedToSubjectClass } = require('./teacherSubjectController');
 
 // Calculate CBC grade from average
 const calculateGrade = (average) => {
@@ -97,16 +98,13 @@ const submitGrades = async (req, res) => {
     }
 
     try {
-        const [teacherRows] = await db.query(`
-      SELECT t.id FROM teachers t
-      JOIN users u ON u.email = t.email
-      WHERE u.id = ?
-    `, [req.user.id]);
+        const { allowed, teacher_id } = await isTeacherAssignedToSubjectClass(req.user.id, subject_id, class_id);
 
-        if (teacherRows.length === 0)
+        if (!teacher_id)
             return res.status(403).json({ message: 'Teacher profile not found.' });
 
-        const teacher_id = teacherRows[0].id;
+        if (!allowed)
+            return res.status(403).json({ message: 'You are not assigned to teach this subject for this class.' });
 
         for (const record of records) {
             const average = calculateAverage(

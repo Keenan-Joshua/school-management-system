@@ -3,6 +3,7 @@ import api from '../../services/api';
 import TeacherForm from './TeacherForm';
 import ClassAssignment from './ClassAssignment';
 import BackButton from "../../components/BackButton";
+import SubjectAssignment from './SubjectAssignment';
 
 function Teachers() {
     const [teachers, setTeachers] = useState([]);
@@ -49,8 +50,7 @@ function Teachers() {
 
     const filtered = teachers.filter(t =>
         t.full_name.toLowerCase().includes(search.toLowerCase()) ||
-        t.email.toLowerCase().includes(search.toLowerCase()) ||
-        t.specialisation.toLowerCase().includes(search.toLowerCase())
+        t.email.toLowerCase().includes(search.toLowerCase())
     );
 
     if (loading) return <p className="p-8 text-gray-500">Loading teachers...</p>;
@@ -72,7 +72,7 @@ function Teachers() {
 
             <input
                 type="text"
-                placeholder="Search by name, email or specialisation..."
+                placeholder="Search by name or email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -93,7 +93,6 @@ function Teachers() {
                         <th className="px-4 py-3 text-left">Email</th>
                         <th className="px-4 py-3 text-left">Phone</th>
                         <th className="px-4 py-3 text-left">Gender</th>
-                        <th className="px-4 py-3 text-left">Specialisation</th>
                         <th className="px-4 py-3 text-left">Date Joined</th>
                         {isAdmin && <th className="px-4 py-3 text-left">Actions</th>}
                     </tr>
@@ -112,7 +111,6 @@ function Teachers() {
                                 <td className="px-4 py-3">{teacher.email}</td>
                                 <td className="px-4 py-3">{teacher.phone}</td>
                                 <td className="px-4 py-3 capitalize">{teacher.gender}</td>
-                                <td className="px-4 py-3">{teacher.specialisation}</td>
                                 <td className="px-4 py-3">
                                     {new Date(teacher.date_joined).toLocaleDateString()}
                                 </td>
@@ -139,6 +137,7 @@ function Teachers() {
                 </table>
             </div>
             {isAdmin && <ClassAssignment />}
+            {isAdmin && <SubjectAssignment />}
         </div>
     );
 }

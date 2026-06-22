@@ -26,7 +26,7 @@ const getTeacherById = async (req, res) => {
 };
 
 const createTeacher = async (req, res) => {
-    const { full_name, email, phone, gender, specialisation, date_joined } = req.body;
+    const { full_name, email, phone, gender, date_joined } = req.body;
 
     try {
         const [existing] = await db.query(
@@ -37,10 +37,10 @@ const createTeacher = async (req, res) => {
             return res.status(400).json({ message: 'Email already registered.' });
 
         await db.query(
-            `INSERT INTO teachers 
-        (full_name, email, phone, gender, specialisation, date_joined)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-            [full_name, email, phone, gender, specialisation, date_joined]
+            `INSERT INTO teachers
+                 (full_name, email, phone, gender, date_joined)
+             VALUES (?, ?, ?, ?, ?)`,
+            [full_name, email, phone, gender, date_joined]
         );
 
         res.status(201).json({ message: 'Teacher created successfully.' });
@@ -50,7 +50,7 @@ const createTeacher = async (req, res) => {
 };
 
 const updateTeacher = async (req, res) => {
-    const { full_name, email, phone, gender, specialisation, date_joined } = req.body;
+    const { full_name, email, phone, gender, date_joined } = req.body;
 
     try {
         const [existing] = await db.query(
@@ -62,10 +62,9 @@ const updateTeacher = async (req, res) => {
 
         await db.query(
             `UPDATE teachers SET
-        full_name = ?, email = ?, phone = ?, gender = ?,
-        specialisation = ?, date_joined = ?
-       WHERE id = ?`,
-            [full_name, email, phone, gender, specialisation, date_joined, req.params.id]
+                                 full_name = ?, email = ?, phone = ?, gender = ?, date_joined = ?
+             WHERE id = ?`,
+            [full_name, email, phone, gender, date_joined, req.params.id]
         );
 
         res.json({ message: 'Teacher updated successfully.' });
