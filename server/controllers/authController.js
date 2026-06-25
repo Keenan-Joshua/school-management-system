@@ -48,10 +48,14 @@ const checkSetupStatus = async (req, res) => {
 
 // Admin-only - create any user account from inside the dashboard
 const createUser = async (req, res) => {
-    const { full_name, email, password, role } = req.body;
+    const { full_name, email, password, role, phone, gender, date_joined } = req.body;
 
     if (!full_name || !email || !password || !role) {
         return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    if (role === 'teacher' && (!phone || !gender || !date_joined)) {
+        return res.status(400).json({ message: 'Phone, gender and date joined are required for teacher accounts.' });
     }
 
     try {
@@ -65,6 +69,14 @@ const createUser = async (req, res) => {
             'INSERT INTO users (full_name, email, password, role, force_password_reset) VALUES (?, ?, ?, ?, ?)',
             [full_name, email, hashedPassword, role, true]
         );
+
+        // Keep the teachers table in sync, since other modules rely on it directly
+        if (role === 'teacher') {
+            await db.query(
+                'INSERT INTO teachers (full_name, email, phone, gender, date_joined) VALUES (?, ?, ?, ?, ?)',
+                [full_name, email, phone, gender, date_joined]
+            );
+        }
 
         res.status(201).json({ message: 'User account created successfully.' });
     } catch (err) {

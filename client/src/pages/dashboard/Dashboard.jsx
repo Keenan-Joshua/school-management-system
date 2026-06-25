@@ -1,4 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
+import ConfirmModal from '../../components/ConfirmModal';
+import {useState} from "react";
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -6,6 +8,7 @@ function Dashboard() {
     const isAdmin = user?.role === 'administrator';
     const isTeacher = user?.role === 'teacher';
     const isParent = user?.role === 'parent';
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
 
     const handleLogout = () => {
@@ -23,7 +26,7 @@ function Dashboard() {
             {user?.full_name} — <span className="capitalize">{user?.role}</span>
           </span>
                     <button
-                        onClick={handleLogout}
+                        onClick={() => setShowLogoutConfirm(true)}
                         className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                     >
                         Logout
@@ -112,6 +115,15 @@ function Dashboard() {
                 </div>
 
             </div>
+            {showLogoutConfirm && (
+                <ConfirmModal
+                    title="Log Out"
+                    message="Are you sure you want to log out?"
+                    confirmLabel="Log Out"
+                    onConfirm={handleLogout}
+                    onCancel={() => setShowLogoutConfirm(false)}
+                />
+            )}
         </div>
     );
 }

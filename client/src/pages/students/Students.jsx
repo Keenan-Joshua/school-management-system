@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import StudentForm from './StudentForm';
 import BackButton from '../../components/BackButton';
+import ConfirmModal from '../../components/ConfirmModal';
 
 function Students() {
     const [students, setStudents] = useState([]);
@@ -11,6 +12,7 @@ function Students() {
     const [search, setSearch] = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
+    const [studentToDelete, setStudentToDelete] = useState(null);
 
     const fetchStudents = async () => {
         try {
@@ -25,13 +27,14 @@ function Students() {
 
     useEffect(() => { fetchStudents(); }, []);
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this student?')) return;
+    const confirmDelete = async () => {
         try {
-            await api.delete(`/students/${id}`);
+            await api.delete(`/students/${studentToDelete}`);
+            setStudentToDelete(null);
             fetchStudents();
         } catch (err) {
             alert(err.response?.data?.message || 'Delete failed.');
+            setStudentToDelete(null);
         }
     };
 
@@ -121,7 +124,7 @@ function Students() {
                                             Edit
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(student.id)}
+                                            onClick={() => setStudentToDelete(student.id)}
                                             className="text-red-500 hover:underline"
                                         >
                                             Delete
@@ -134,6 +137,15 @@ function Students() {
                     </tbody>
                 </table>
             </div>
+            {studentToDelete && (
+                <ConfirmModal
+                    title="Delete Student"
+                    message="Are you sure you want to delete this student? This will also remove their attendance, grades, and guardian links."
+                    confirmLabel="Delete"
+                    onConfirm={confirmDelete}
+                    onCancel={() => setStudentToDelete(null)}
+                />
+            )}
         </div>
     );
 }
