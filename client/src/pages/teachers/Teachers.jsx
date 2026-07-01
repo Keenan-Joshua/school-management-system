@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import TeacherForm from './TeacherForm';
 import ClassAssignment from './ClassAssignment';
-import BackButton from "../../components/BackButton";
 import SubjectAssignment from './SubjectAssignment';
 
 function Teachers() {
@@ -57,13 +56,12 @@ function Teachers() {
 
     return (
         <div className="p-8">
-            <BackButton />
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">Teacher Management</h2>
                 {isAdmin && (
                     <button
                         onClick={() => setShowForm(true)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                        className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 text-sm"
                     >
                         + Add Teacher
                     </button>
@@ -75,7 +73,7 @@ function Teachers() {
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
 
             {showForm && (
@@ -118,7 +116,7 @@ function Teachers() {
                                     <td className="px-4 py-3 flex gap-2">
                                         <button
                                             onClick={() => handleEdit(teacher)}
-                                            className="text-blue-600 hover:underline"
+                                            className="text-emerald-600 hover:underline"
                                         >
                                             Edit
                                         </button>

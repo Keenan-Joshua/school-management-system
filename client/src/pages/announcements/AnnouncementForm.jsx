@@ -65,7 +65,7 @@ function AnnouncementForm({ announcement, onClose }) {
                             value={formData.title}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                             placeholder="Announcement title"
                         />
                     </div>
@@ -78,7 +78,7 @@ function AnnouncementForm({ announcement, onClose }) {
                             onChange={handleChange}
                             required
                             rows={5}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                             placeholder="Write your announcement here..."
                         />
                     </div>
@@ -89,7 +89,7 @@ function AnnouncementForm({ announcement, onClose }) {
                             name="audience"
                             value={formData.audience}
                             onChange={handleChange}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="all">Everyone</option>
                             <option value="teachers">Teachers Only</option>
@@ -108,7 +108,7 @@ function AnnouncementForm({ announcement, onClose }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                            className="px-4 py-2 text-sm bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-50"
                         >
                             {loading ? 'Saving...' : announcement ? 'Update' : 'Post Announcement'}
                         </button>

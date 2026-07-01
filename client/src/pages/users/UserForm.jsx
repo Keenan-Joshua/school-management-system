@@ -60,7 +60,7 @@ function UserForm({ onClose }) {
                             value={formData.full_name}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -72,7 +72,7 @@ function UserForm({ onClose }) {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -86,7 +86,7 @@ function UserForm({ onClose }) {
                             required
                             minLength={6}
                             placeholder="Share this with the user"
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -96,7 +96,7 @@ function UserForm({ onClose }) {
                             name="role"
                             value={formData.role}
                             onChange={handleChange}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="teacher">Teacher</option>
                             <option value="parent">Parent</option>
@@ -120,7 +120,7 @@ function UserForm({ onClose }) {
                                     value={formData.phone}
                                     onChange={handleChange}
                                     required
-                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                 />
                             </div>
 
@@ -131,7 +131,7 @@ function UserForm({ onClose }) {
                                     value={formData.gender}
                                     onChange={handleChange}
                                     required
-                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                 >
                                     <option value="">Select gender</option>
                                     <option value="male">Male</option>
@@ -147,7 +147,7 @@ function UserForm({ onClose }) {
                                     value={formData.date_joined}
                                     onChange={handleChange}
                                     required
-                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                 />
                             </div>
                         </>
@@ -164,7 +164,7 @@ function UserForm({ onClose }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                            className="px-4 py-2 text-sm bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-50"
                         >
                             {loading ? 'Creating...' : 'Create Account'}
                         </button>

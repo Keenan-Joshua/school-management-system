@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import BackButton from '../../components/BackButton';
 
 function Attendance() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -145,7 +144,6 @@ function Attendance() {
 
     return (
         <div className="p-8">
-            <BackButton />
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Attendance Tracking</h2>
 
             {/* Filters */}
@@ -156,7 +154,7 @@ function Attendance() {
                         <select
                             value={selectedClass}
                             onChange={e => setSelectedClass(e.target.value)}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select a class</option>
                             {classes.map(c => (
@@ -182,7 +180,7 @@ function Attendance() {
                             type="date"
                             value={selectedDate}
                             onChange={e => setSelectedDate(e.target.value)}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
                 )}
@@ -192,7 +190,7 @@ function Attendance() {
                         <select
                             value={selectedChild}
                             onChange={e => setSelectedChild(e.target.value)}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             {children.map(c => (
                                 <option key={c.id} value={c.id}>{c.full_name} — {c.class_name}</option>
@@ -319,7 +317,7 @@ function Attendance() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={submitting}
-                                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-sm disabled:opacity-50"
+                                className="bg-emerald-600 text-white px-5 py-2 rounded hover:bg-emerald-700 text-sm disabled:opacity-50"
                             >
                                 {submitting ? 'Submitting...' : alreadySubmitted ? 'Update Attendance' : 'Submit Attendance'}
                             </button>

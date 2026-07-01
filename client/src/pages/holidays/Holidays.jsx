@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import BackButton from '../../components/BackButton';
 
 function Holidays() {
     const [holidays, setHolidays] = useState([]);
@@ -52,7 +51,6 @@ function Holidays() {
 
     return (
         <div className="p-8">
-            <BackButton />
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Holiday & Non-School Day Management</h2>
 
             <p className="text-sm text-gray-500 mb-4">
@@ -74,7 +72,7 @@ function Holidays() {
                         value={date}
                         onChange={e => setDate(e.target.value)}
                         required
-                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
                 <div className="flex-1 min-w-[200px]">
@@ -85,12 +83,12 @@ function Holidays() {
                         onChange={e => setDescription(e.target.value)}
                         required
                         placeholder="e.g. Labour Day, Mid-term break"
-                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
                 <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                    className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 text-sm"
                 >
                     Add Holiday
                 </button>

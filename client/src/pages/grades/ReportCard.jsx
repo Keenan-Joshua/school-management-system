@@ -51,7 +51,7 @@ function ReportCard({ student, term, year, onClose }) {
                     <div className="flex gap-2">
                         <button
                             onClick={handlePrint}
-                            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700"
+                            className="bg-emerald-600 text-white px-4 py-1 rounded text-sm hover:bg-emerald-700"
                         >
                             Print / Download
                         </button>

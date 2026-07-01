@@ -81,7 +81,7 @@ function ClassAssignment() {
                                         value={cls.teacher_id || ''}
                                         onChange={e => handleAssign(cls.id, e.target.value)}
                                         disabled={saving === cls.id}
-                                        className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                     >
                                         <option value="">— Unassign —</option>
                                         {teachers.map(t => (

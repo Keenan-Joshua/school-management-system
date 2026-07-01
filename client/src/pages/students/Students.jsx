@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import StudentForm from './StudentForm';
-import BackButton from '../../components/BackButton';
 import ConfirmModal from '../../components/ConfirmModal';
 
 function Students() {
@@ -58,13 +57,12 @@ function Students() {
 
     return (
         <div className="p-8">
-            <BackButton />
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">Student Registration</h2>
                 {isAdmin && (
                     <button
                         onClick={() => setShowForm(true)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                        className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 text-sm"
                     >
                         + Add Student
                     </button>
@@ -76,7 +74,7 @@ function Students() {
                 placeholder="Search by name or admission number..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
 
             {showForm && (
@@ -119,7 +117,7 @@ function Students() {
                                     <td className="px-4 py-3 flex gap-2">
                                         <button
                                             onClick={() => handleEdit(student)}
-                                            className="text-blue-600 hover:underline"
+                                            className="text-emerald-600 hover:underline"
                                         >
                                             Edit
                                         </button>

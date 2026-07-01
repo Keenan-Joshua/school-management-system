@@ -58,9 +58,25 @@ const isNonSchoolDay = async (dateStr) => {
     return { blocked: false };
 };
 
+const getUpcomingHolidays = async (req, res) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const [rows] = await db.query(`
+      SELECT * FROM holidays
+      WHERE date >= ?
+      ORDER BY date ASC
+      LIMIT 5
+    `, [today]);
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     getAllHolidays,
     createHoliday,
     deleteHoliday,
     isNonSchoolDay,
+    getUpcomingHolidays,
 };

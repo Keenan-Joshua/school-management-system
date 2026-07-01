@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import BackButton from '../../components/BackButton';
 import UserForm from './UserForm';
 
 function Users() {
@@ -38,13 +37,12 @@ function Users() {
 
     return (
         <div className="p-8">
-            <BackButton />
 
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">User Accounts</h2>
                 <button
                     onClick={() => setShowForm(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                    className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 text-sm"
                 >
                     + Create User Account
                 </button>

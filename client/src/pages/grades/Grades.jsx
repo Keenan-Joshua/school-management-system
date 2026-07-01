@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import SubjectManager from './SubjectManager';
 import ReportCard from './ReportCard';
-import BackButton from '../../components/BackButton';
 
 function Grades() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -119,7 +118,7 @@ function Grades() {
 
     const gradeColor = (grade) => {
         if (grade === 'EE') return 'text-green-600 font-bold';
-        if (grade === 'ME') return 'text-blue-600 font-bold';
+        if (grade === 'ME') return 'text-emerald-600 font-bold';
         if (grade === 'AE') return 'text-yellow-600 font-bold';
         if (grade === 'BE') return 'text-red-600 font-bold';
         return 'text-gray-400';
@@ -127,7 +126,6 @@ function Grades() {
 
     return (
         <div className="p-8">
-            <BackButton />
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Grades and Report Cards</h2>
 
             {isParent ? (
@@ -142,7 +140,7 @@ function Grades() {
                                     <select
                                         value={selectedChild}
                                         onChange={e => setSelectedChild(e.target.value)}
-                                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                     >
                                         {children.map(c => (
                                             <option key={c.id} value={c.id}>{c.full_name} — {c.class_name}</option>
@@ -155,7 +153,7 @@ function Grades() {
                                     <select
                                         value={selectedTerm}
                                         onChange={e => setSelectedTerm(e.target.value)}
-                                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                     >
                                         <option>Term 1</option>
                                         <option>Term 2</option>
@@ -171,14 +169,14 @@ function Grades() {
                                         onChange={e => setSelectedYear(e.target.value)}
                                         min="2020"
                                         max="2099"
-                                        className="border border-gray-300 rounded px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="border border-gray-300 rounded px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                     />
                                 </div>
                             </div>
 
                             <button
                                 onClick={() => setViewReportCard(children.find(c => c.id === parseInt(selectedChild)))}
-                                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-sm"
+                                className="bg-emerald-600 text-white px-5 py-2 rounded hover:bg-emerald-700 text-sm"
                             >
                                 View Report Card
                             </button>
@@ -204,7 +202,7 @@ function Grades() {
                         <select
                             value={selectedClass}
                             onChange={e => setSelectedClass(e.target.value)}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select class</option>
                             {classes.map(c => (
@@ -224,7 +222,7 @@ function Grades() {
                                 setSelectedClass(class_id);
                                 setSelectedSubject(subject_id);
                             }}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select class & subject</option>
                             {teacherAssignments.map(a => (
@@ -241,7 +239,7 @@ function Grades() {
                             <select
                                 value={selectedSubject}
                                 onChange={e => setSelectedSubject(e.target.value)}
-                                className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                             >
                                 <option value="">Select subject</option>
                                 {subjects.map(s => (
@@ -257,7 +255,7 @@ function Grades() {
                     <select
                         value={selectedTerm}
                         onChange={e => setSelectedTerm(e.target.value)}
-                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                         <option>Term 1</option>
                         <option>Term 2</option>
@@ -273,7 +271,7 @@ function Grades() {
                         onChange={e => setSelectedYear(e.target.value)}
                         min="2020"
                         max="2099"
-                        className="border border-gray-300 rounded px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 rounded px-3 py-2 text-sm w-24 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
             </div>
@@ -322,7 +320,7 @@ function Grades() {
                                                     max="100"
                                                     value={student[field]}
                                                     onChange={e => handleScoreChange(student.id, field, e.target.value)}
-                                                    className="w-16 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-16 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                                 />
                                             ) : (
                                                 <span>{student[field] !== '' ? student[field] : '—'}</span>
@@ -338,7 +336,7 @@ function Grades() {
                                     <td className="px-4 py-3">
                                         <button
                                             onClick={() => setViewReportCard(student)}
-                                            className="text-blue-600 hover:underline text-xs"
+                                            className="text-emerald-600 hover:underline text-xs"
                                         >
                                             View
                                         </button>
@@ -354,7 +352,7 @@ function Grades() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={submitting}
-                                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-sm disabled:opacity-50"
+                                className="bg-emerald-600 text-white px-5 py-2 rounded hover:bg-emerald-700 text-sm disabled:opacity-50"
                             >
                                 {submitting ? 'Submitting...' : 'Submit Grades'}
                             </button>

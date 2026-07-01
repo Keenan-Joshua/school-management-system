@@ -8,24 +8,19 @@ import Teachers from './pages/teachers/Teachers';
 import Attendance from './pages/attendance/Attendance';
 import Grades from './pages/grades/Grades';
 import Announcements from './pages/announcements/Announcements';
-import Users from './pages/users/Users';
 import Holidays from './pages/holidays/Holidays';
+import Users from './pages/users/Users';
+import Layout from './components/Layout';
 
-const PrivateRoute = ({ children, allowedRoles }) => {
+const PrivateRoute = ({ children, allowedRoles, pageTitle }) => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!token) return <Navigate to="/login" />;
+    if (user?.force_password_reset) return <Navigate to="/force-password-reset" />;
+    if (allowedRoles && !allowedRoles.includes(user?.role)) return <Navigate to="/dashboard" />;
 
-    if (user?.force_password_reset) {
-        return <Navigate to="/force-password-reset" />;
-    }
-
-    if (allowedRoles && !allowedRoles.includes(user?.role)) {
-        return <Navigate to="/dashboard" />;
-    }
-
-    return children;
+    return <Layout pageTitle={pageTitle}>{children}</Layout>;
 };
 
 function App() {
@@ -37,50 +32,50 @@ function App() {
                 <Route path="/force-password-reset" element={<ForcePasswordReset />} />
 
                 <Route path="/dashboard" element={
-                    <PrivateRoute>
+                    <PrivateRoute pageTitle="Dashboard">
                         <Dashboard />
                     </PrivateRoute>
                 } />
 
-                <Route path="/users" element={
-                    <PrivateRoute allowedRoles={['administrator']}>
-                        <Users />
-                    </PrivateRoute>
-                } />
-
                 <Route path="/students" element={
-                    <PrivateRoute allowedRoles={['administrator', 'teacher']}>
+                    <PrivateRoute allowedRoles={['administrator', 'teacher']} pageTitle="Student Registration">
                         <Students />
                     </PrivateRoute>
                 } />
 
                 <Route path="/teachers" element={
-                    <PrivateRoute allowedRoles={['administrator']}>
+                    <PrivateRoute allowedRoles={['administrator']} pageTitle="Teacher Management">
                         <Teachers />
                     </PrivateRoute>
                 } />
 
                 <Route path="/attendance" element={
-                    <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']}>
+                    <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']} pageTitle="Attendance Tracking">
                         <Attendance />
                     </PrivateRoute>
                 } />
 
                 <Route path="/grades" element={
-                    <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']}>
+                    <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']} pageTitle="Grades & Report Cards">
                         <Grades />
                     </PrivateRoute>
                 } />
 
                 <Route path="/announcements" element={
-                    <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']}>
+                    <PrivateRoute allowedRoles={['administrator', 'teacher', 'parent']} pageTitle="School Announcements">
                         <Announcements />
                     </PrivateRoute>
                 } />
 
                 <Route path="/holidays" element={
-                    <PrivateRoute allowedRoles={['administrator']}>
+                    <PrivateRoute allowedRoles={['administrator']} pageTitle="Holiday Management">
                         <Holidays />
+                    </PrivateRoute>
+                } />
+
+                <Route path="/users" element={
+                    <PrivateRoute allowedRoles={['administrator']} pageTitle="User Accounts">
+                        <Users />
                     </PrivateRoute>
                 } />
 

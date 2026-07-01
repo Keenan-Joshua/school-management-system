@@ -93,7 +93,7 @@ function SubjectAssignment() {
                         value={formData.class_id}
                         onChange={handleChange}
                         required
-                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                         <option value="">Select class</option>
                         {classes.map(c => (
@@ -109,7 +109,7 @@ function SubjectAssignment() {
                         value={formData.subject_id}
                         onChange={handleChange}
                         required
-                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                         <option value="">Select subject</option>
                         {subjects.map(s => (
@@ -125,7 +125,7 @@ function SubjectAssignment() {
                         value={formData.teacher_id}
                         onChange={handleChange}
                         required
-                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                         <option value="">Select teacher</option>
                         {teachers.map(t => (
@@ -136,7 +136,7 @@ function SubjectAssignment() {
 
                 <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                    className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 text-sm"
                 >
                     Assign
                 </button>
@@ -168,7 +168,7 @@ function SubjectAssignment() {
                                     <select
                                         value={a.teacher_id}
                                         onChange={e => handleReassign(a.id, e.target.value)}
-                                        className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                     >
                                         {teachers.map(t => (
                                             <option key={t.id} value={t.id}>{t.full_name}</option>

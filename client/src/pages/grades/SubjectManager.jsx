@@ -44,11 +44,11 @@ function SubjectManager({ subjects, onUpdate }) {
                     value={newSubject}
                     onChange={e => setNewSubject(e.target.value)}
                     placeholder="New subject name"
-                    className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
                     onClick={handleAdd}
-                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                    className="bg-emerald-600 text-white px-3 py-1 rounded text-sm hover:bg-emerald-700"
                 >
                     Add
                 </button>

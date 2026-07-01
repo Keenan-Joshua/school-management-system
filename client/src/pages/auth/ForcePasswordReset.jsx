@@ -64,7 +64,7 @@ function ForcePasswordReset() {
                             onChange={e => setNewPassword(e.target.value)}
                             required
                             minLength={6}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -76,14 +76,14 @@ function ForcePasswordReset() {
                             onChange={e => setConfirmPassword(e.target.value)}
                             required
                             minLength={6}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                        className="w-full bg-emerald-600 text-white py-2 rounded font-medium hover:bg-emerald-700 transition disabled:opacity-50"
                     >
                         {loading ? 'Updating...' : 'Set Password & Continue'}
                     </button>

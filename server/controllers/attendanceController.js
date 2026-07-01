@@ -177,10 +177,76 @@ const getAttendanceForParent = async (req, res) => {
     }
 };
 
+const getClassesWithoutAttendanceToday = async (req, res) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+
+        const [classes] = await db.query(`
+      SELECT c.id, c.name,
+        CASE WHEN a.class_id IS NOT NULL THEN 1 ELSE 0 END AS has_attendance
+      FROM classes c
+      LEFT JOIN (
+        SELECT DISTINCT class_id FROM attendance WHERE date = ?
+      ) a ON c.id = a.class_id
+      ORDER BY c.name ASC
+    `, [today]);
+
+        const missing = classes.filter(c => !c.has_attendance);
+        res.json(missing);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
+const getTeacherAttendanceStatusToday = async (req, res) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+
+        const [teacherRows] = await db.query(`
+      SELECT t.id FROM teachers t
+      JOIN users u ON u.email = t.email
+      WHERE u.id = ?
+    `, [req.user.id]);
+
+        if (teacherRows.length === 0) {
+            return res.status(404).json({ message: 'Teacher profile not found.' });
+        }
+
+        const teacher_id = teacherRows[0].id;
+
+        const [classRow] = await db.query(
+            'SELECT id, name FROM classes WHERE teacher_id = ?',
+            [teacher_id]
+        );
+
+        if (classRow.length === 0) {
+            return res.json({ assigned: false });
+        }
+
+        const cls = classRow[0];
+        const [attendance] = await db.query(
+            'SELECT id FROM attendance WHERE class_id = ? AND date = ? LIMIT 1',
+            [cls.id, today]
+        );
+
+        res.json({
+            assigned: true,
+            class_id: cls.id,
+            class_name: cls.name,
+            submitted: attendance.length > 0,
+            today,
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     getTeacherClass,
     getAttendanceByClassAndDate,
     submitAttendance,
     getAttendanceByStudent,
     getAttendanceForParent,
+    getClassesWithoutAttendanceToday,
+    getTeacherAttendanceStatusToday,
 };

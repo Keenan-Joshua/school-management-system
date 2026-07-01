@@ -77,7 +77,7 @@ function TeacherForm({ teacher, onClose }) {
                                 value={formData[field.name]}
                                 onChange={handleChange}
                                 required
-                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                             />
                         </div>
                     ))}
@@ -91,7 +91,7 @@ function TeacherForm({ teacher, onClose }) {
                             value={formData.gender}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select gender</option>
                             <option value="male">Male</option>
@@ -110,7 +110,7 @@ function TeacherForm({ teacher, onClose }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                            className="px-4 py-2 text-sm bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-50"
                         >
                             {loading ? 'Saving...' : teacher ? 'Update Teacher' : 'Add Teacher'}
                         </button>

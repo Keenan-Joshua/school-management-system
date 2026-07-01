@@ -48,7 +48,7 @@ function Register() {
                     <p className="text-gray-500 mb-6">
                         An administrator account already exists. Please contact your school administrator to get an account created for you.
                     </p>
-                    <Link to="/login" className="text-blue-600 hover:underline text-sm">
+                    <Link to="/login" className="text-emerald-600 hover:underline text-sm">
                         Back to Login
                     </Link>
                 </div>
@@ -81,7 +81,7 @@ function Register() {
                             value={formData.full_name}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -93,7 +93,7 @@ function Register() {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -106,14 +106,14 @@ function Register() {
                             onChange={handleChange}
                             required
                             minLength={6}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                        className="w-full bg-emerald-600 text-white py-2 rounded font-medium hover:bg-emerald-700 transition disabled:opacity-50"
                     >
                         {loading ? 'Creating account...' : 'Create Administrator Account'}
                     </button>
@@ -121,7 +121,7 @@ function Register() {
 
                 <p className="text-center text-sm text-gray-500 mt-4">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-blue-600 hover:underline">Sign in</Link>
+                    <Link to="/login" className="text-emerald-600 hover:underline">Sign in</Link>
                 </p>
             </div>
         </div>

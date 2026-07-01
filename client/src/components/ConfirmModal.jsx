@@ -14,7 +14,7 @@ function ConfirmModal({ title, message, confirmLabel = 'Confirm', danger = true,
                     <button
                         onClick={onConfirm}
                         className={`px-4 py-2 text-sm rounded text-white ${
-                            danger ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
+                            danger ? 'bg-red-600 hover:bg-red-700' : 'bg-emerald-600 hover:bg-emerald-700'
                         }`}
                     >
                         {confirmLabel}

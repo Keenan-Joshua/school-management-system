@@ -80,7 +80,7 @@ function ParentLinker({ studentId }) {
                 <select
                     value={selectedParent}
                     onChange={e => setSelectedParent(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                     <option value="">Select a parent account to link...</option>
                     {parents.map(p => (
@@ -90,7 +90,7 @@ function ParentLinker({ studentId }) {
                 <button
                     type="button"
                     onClick={handleLink}
-                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700"
+                    className="bg-emerald-600 text-white px-3 py-1.5 rounded text-sm hover:bg-emerald-700"
                 >
                     Link
                 </button>
