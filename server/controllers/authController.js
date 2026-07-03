@@ -152,11 +152,32 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+// Admin resets another user's password
+const adminResetPassword = async (req, res) => {
+    const { user_id, new_password } = req.body;
+
+    if (!new_password || new_password.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(new_password, 10);
+        await db.query(
+            'UPDATE users SET password = ?, force_password_reset = TRUE WHERE id = ?',
+            [hashedPassword, user_id]
+        );
+        res.json({ message: 'Password reset successfully. User will be prompted to set a new password on next login.' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     register,
     checkSetupStatus,
     createUser,
     login,
     resetPassword,
+    adminResetPassword,
     getAllUsers,
 };

@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
 import AnnouncementForm from './AnnouncementForm';
+import ConfirmModal from '../../components/ConfirmModal';
+import Spinner from '../../components/Spinner';
+import { useLocation } from 'react-router-dom';
 
 function Announcements() {
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
+    const location = useLocation();
+    const highlightId = location.state?.highlightId;
+    const highlightRef = useRef(null);
 
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+    const [announcementToDelete, setAnnouncementToDelete] = useState(null);
     const [error, setError] = useState('');
 
     const fetchAnnouncements = async () => {
@@ -25,13 +32,20 @@ function Announcements() {
 
     useEffect(() => { fetchAnnouncements(); }, []);
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Delete this announcement?')) return;
+    useEffect(() => {
+        if (highlightId && highlightRef.current) {
+            highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [highlightId, announcements]);
+
+    const confirmDelete = async () => {
         try {
-            await api.delete(`/announcements/${id}`);
+            await api.delete(`/announcements/${announcementToDelete}`);
+            setAnnouncementToDelete(null);
             fetchAnnouncements();
         } catch (err) {
             alert(err.response?.data?.message || 'Delete failed.');
+            setAnnouncementToDelete(null);
         }
     };
 
@@ -53,7 +67,7 @@ function Announcements() {
         return 'bg-gray-100 text-gray-700';
     };
 
-    if (loading) return <p className="p-8 text-gray-500">Loading announcements...</p>;
+    if (loading) return <Spinner message="Loading announcements..." />;
 
     return (
         <div className="p-8">
@@ -87,7 +101,15 @@ function Announcements() {
             ) : (
                 <div className="space-y-4">
                     {announcements.map(a => (
-                        <div key={a.id} className="bg-white rounded-lg shadow p-5">
+                        <div
+                            key={a.id}
+                            ref={a.id === highlightId ? highlightRef : null}
+                            className="bg-white rounded-lg shadow p-5 transition-all duration-500"
+                            style={a.id === highlightId ? {
+                                border: '1.5px solid #059669',
+                                boxShadow: '0 0 0 3px rgba(5, 150, 105, 0.15)',
+                            } : {}}
+                        >
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-1">
@@ -113,7 +135,7 @@ function Announcements() {
                                             Edit
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(a.id)}
+                                            onClick={() => setAnnouncementToDelete(a.id)}
                                             className="text-red-500 hover:underline"
                                         >
                                             Delete
@@ -124,6 +146,15 @@ function Announcements() {
                         </div>
                     ))}
                 </div>
+            )}
+            {announcementToDelete && (
+                <ConfirmModal
+                    title="Delete Announcement"
+                    message="Are you sure you want to delete this announcement? This cannot be undone."
+                    confirmLabel="Delete"
+                    onConfirm={confirmDelete}
+                    onCancel={() => setAnnouncementToDelete(null)}
+                />
             )}
         </div>
     );

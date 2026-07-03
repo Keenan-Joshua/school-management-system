@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Spinner from '../../components/Spinner';
 
 function Holidays() {
     const [holidays, setHolidays] = useState([]);
@@ -47,7 +48,7 @@ function Holidays() {
         }
     };
 
-    if (loading) return <p className="p-8 text-gray-500">Loading holidays...</p>;
+    if (loading) return <Spinner message="Loading holidays..." />;
 
     return (
         <div className="p-8">

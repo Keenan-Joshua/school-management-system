@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Spinner from '../../components/Spinner';
 
 function Attendance() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -219,7 +220,7 @@ function Attendance() {
 
             {isParent ? (
                 loading ? (
-                    <p className="text-gray-500 text-sm">Loading attendance...</p>
+                    <Spinner message="Loading attendance..." />
                 ) : children.length === 0 ? (
                     <p className="text-gray-400 text-sm">No children linked to your account yet. Contact the school administrator.</p>
                 ) : (
@@ -257,7 +258,7 @@ function Attendance() {
                     </div>
                 )
             ) : loading ? (
-                <p className="text-gray-500 text-sm">Loading students...</p>
+                <Spinner message="Loading attendance..." />
             ) : students.length === 0 ? (
                 <p className="text-gray-400 text-sm">
                     {selectedClass ? 'No students found in this class.' : 'Select a class to begin.'}

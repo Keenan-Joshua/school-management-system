@@ -65,7 +65,24 @@ function ReportCard({ student, term, year, onClose }) {
                 </div>
 
                 {loading ? (
-                    <p className="text-gray-500 text-sm">Loading report card...</p>
+                    <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    {[...Array(6)].map((_, i) => (
+      <div key={i} style={{
+        height: '14px',
+        background: 'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)',
+        backgroundSize: '200% 100%',
+        animation: 'shimmer 1.4s infinite',
+        borderRadius: '6px',
+        width: `${[90, 70, 85, 60, 80, 75][i]}%`,
+      }} />
+    ))}
+    <style>{`
+      @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    `}</style>
+  </div>
                 ) : error ? (
                     <p className="text-red-500 text-sm">{error}</p>
                 ) : (

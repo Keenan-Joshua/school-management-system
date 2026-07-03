@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import ConfirmModal from './ConfirmModal';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const navItems = [
     {
@@ -32,6 +33,7 @@ function Layout({ children, pageTitle }) {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+    const [showChangePassword, setShowChangePassword] = useState(false);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -151,6 +153,28 @@ function Layout({ children, pageTitle }) {
                             </div>
                         </div>
                         <button
+                            onClick={() => setShowChangePassword(true)}
+                            style={{
+                                fontSize: '12px',
+                                color: '#9ca3af',
+                                background: 'transparent',
+                                border: '0.5px solid rgba(255,255,255,0.1)',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                cursor: 'pointer',
+                            }}
+                            onMouseEnter={e => {
+                                e.target.style.color = 'white';
+                                e.target.style.borderColor = 'rgba(255,255,255,0.3)';
+                            }}
+                            onMouseLeave={e => {
+                                e.target.style.color = '#9ca3af';
+                                e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                            }}
+                        >
+                            Change Password
+                        </button>
+                        <button
                             onClick={() => setShowLogoutConfirm(true)}
                             style={{
                                 fontSize: '12px',
@@ -189,6 +213,9 @@ function Layout({ children, pageTitle }) {
                     onConfirm={handleLogout}
                     onCancel={() => setShowLogoutConfirm(false)}
                 />
+            )}
+            {showChangePassword && (
+                <ChangePasswordModal onClose={() => setShowChangePassword(false)} />
             )}
         </div>
     );

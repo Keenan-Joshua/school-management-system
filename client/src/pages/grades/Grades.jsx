@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import SubjectManager from './SubjectManager';
 import ReportCard from './ReportCard';
+import Spinner from '../../components/Spinner';
 
 function Grades() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -285,7 +286,7 @@ function Grades() {
 
             {/* Grades Table */}
             {loading ? (
-                <p className="text-gray-500 text-sm">Loading grades...</p>
+                <Spinner message="Loading grades..." />
             ) : students.length === 0 ? (
                 <p className="text-gray-400 text-sm">
                     {selectedClass && selectedSubject ? 'No students found.' : 'Select a class and subject to begin.'}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import StudentForm from './StudentForm';
 import ConfirmModal from '../../components/ConfirmModal';
+import Spinner from '../../components/Spinner';
 
 function Students() {
     const [students, setStudents] = useState([]);
@@ -9,6 +10,8 @@ function Students() {
     const [showForm, setShowForm] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [search, setSearch] = useState('');
+    const [classes, setClasses] = useState([]);
+    const [selectedClass, setSelectedClass] = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
     const [studentToDelete, setStudentToDelete] = useState(null);
@@ -24,7 +27,10 @@ function Students() {
         }
     };
 
-    useEffect(() => { fetchStudents(); }, []);
+    useEffect(() => {
+        fetchStudents();
+        api.get('/students/classes').then(res => setClasses(res.data));
+    }, []);
 
     const confirmDelete = async () => {
         try {
@@ -48,12 +54,15 @@ function Students() {
         fetchStudents();
     };
 
-    const filtered = students.filter(s =>
-        s.full_name.toLowerCase().includes(search.toLowerCase()) ||
-        s.admission_number.toLowerCase().includes(search.toLowerCase())
-    );
+    const filtered = students.filter(s => {
+        const matchesSearch =
+            s.full_name.toLowerCase().includes(search.toLowerCase()) ||
+            s.admission_number.toLowerCase().includes(search.toLowerCase());
+        const matchesClass = selectedClass === '' || s.class_id === parseInt(selectedClass);
+        return matchesSearch && matchesClass;
+    });
 
-    if (loading) return <p className="p-8 text-gray-500">Loading students...</p>;
+    if (loading) return <Spinner message="Loading students..." />;
 
     return (
         <div className="p-8">
@@ -69,13 +78,25 @@ function Students() {
                 )}
             </div>
 
-            <input
-                type="text"
-                placeholder="Search by name or admission number..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+            <div className="flex gap-3 mb-4">
+                <input
+                    type="text"
+                    placeholder="Search by name or admission number..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <select
+                    value={selectedClass}
+                    onChange={e => setSelectedClass(e.target.value)}
+                    className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                    <option value="">All Classes</option>
+                    {classes.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                </select>
+            </div>
 
             {showForm && (
                 <StudentForm
