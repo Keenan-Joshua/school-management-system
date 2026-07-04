@@ -3,6 +3,9 @@ import api from '../../services/api';
 import StudentForm from './StudentForm';
 import ConfirmModal from '../../components/ConfirmModal';
 import Spinner from '../../components/Spinner';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
+
 
 function Students() {
     const [students, setStudents] = useState([]);
@@ -15,6 +18,7 @@ function Students() {
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
     const [studentToDelete, setStudentToDelete] = useState(null);
+    const { toast, showToast, hideToast } = useToast();
 
     const fetchStudents = async () => {
         try {
@@ -37,8 +41,9 @@ function Students() {
             await api.delete(`/students/${studentToDelete}`);
             setStudentToDelete(null);
             fetchStudents();
+            showToast('Student deleted successfully.');
         } catch (err) {
-            alert(err.response?.data?.message || 'Delete failed.');
+            showToast(err.response?.data?.message || 'Delete failed.', 'error');
             setStudentToDelete(null);
         }
     };
@@ -48,9 +53,10 @@ function Students() {
         setShowForm(true);
     };
 
-    const handleFormClose = () => {
+    const handleFormClose = (message) => {
         setSelectedStudent(null);
         setShowForm(false);
+        if (message) showToast(message);
         fetchStudents();
     };
 
@@ -156,6 +162,7 @@ function Students() {
                     </tbody>
                 </table>
             </div>
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
             {studentToDelete && (
                 <ConfirmModal
                     title="Delete Student"

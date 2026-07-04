@@ -181,6 +181,12 @@ const getClassesWithoutAttendanceToday = async (req, res) => {
     try {
         const today = new Date().toISOString().split('T')[0];
 
+        // Check if today is a non-school day before querying
+        const check = await isNonSchoolDay(today);
+        if (check.blocked) {
+            return res.json({ nonSchoolDay: check.reason, missing: [] });
+        }
+
         const [classes] = await db.query(`
       SELECT c.id, c.name,
         CASE WHEN a.class_id IS NOT NULL THEN 1 ELSE 0 END AS has_attendance
@@ -192,7 +198,7 @@ const getClassesWithoutAttendanceToday = async (req, res) => {
     `, [today]);
 
         const missing = classes.filter(c => !c.has_attendance);
-        res.json(missing);
+        res.json({ missing });
     } catch (err) {
         res.status(500).json({ message: 'Server error.', error: err.message });
     }
@@ -201,6 +207,12 @@ const getClassesWithoutAttendanceToday = async (req, res) => {
 const getTeacherAttendanceStatusToday = async (req, res) => {
     try {
         const today = new Date().toISOString().split('T')[0];
+
+        // Check if today is a non-school day
+        const check = await isNonSchoolDay(today);
+        if (check.blocked) {
+            return res.json({ nonSchoolDay: check.reason });
+        }
 
         const [teacherRows] = await db.query(`
       SELECT t.id FROM teachers t

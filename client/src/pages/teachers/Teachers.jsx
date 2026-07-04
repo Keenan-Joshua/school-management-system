@@ -6,6 +6,8 @@ import SubjectAssignment from './SubjectAssignment';
 import ConfirmModal from '../../components/ConfirmModal';
 import Spinner from '../../components/Spinner';
 import QuickUserForm from '../../components/QuickUserForm';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
 
 function Teachers() {
     const [teachers, setTeachers] = useState([]);
@@ -18,6 +20,7 @@ function Teachers() {
     const [createAccountFor, setCreateAccountFor] = useState(null);
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
+    const { toast, showToast, hideToast } = useToast();
 
     const fetchTeachers = async () => {
         try {
@@ -37,8 +40,9 @@ function Teachers() {
             await api.delete(`/teachers/${teacherToDelete}`);
             setTeacherToDelete(null);
             fetchTeachers();
+            showToast('Teacher deleted successfully.');
         } catch (err) {
-            alert(err.response?.data?.message || 'Delete failed.');
+            showToast(err.response?.data?.message || 'Delete failed.', 'error');
             setTeacherToDelete(null);
         }
     };
@@ -48,9 +52,10 @@ function Teachers() {
         setShowForm(true);
     };
 
-    const handleFormClose = () => {
+    const handleFormClose = (message) => {
         setSelectedTeacher(null);
         setShowForm(false);
+        if (message) showToast(message);
         fetchTeachers();
     };
 
@@ -152,12 +157,18 @@ function Teachers() {
                                                 >
                                                     Edit
                                                 </button>
-                                                <button
-                                                    onClick={() => setCreateAccountFor(teacher)}
-                                                    className="text-blue-500 hover:underline"
-                                                >
-                                                    Create Account
-                                                </button>
+                                                {!teacher.has_account && (
+                                                    <button
+                                                        onClick={() => setCreateAccountFor(teacher)}
+                                                        className="text-blue-500 hover:underline"
+                                                    >
+                                                        Create Account
+                                                    </button>
+                                                )}
+
+                                                {teacher.has_account && (
+                                                    <span className="text-xs text-gray-400">Account exists</span>
+                                                )}
                                                 <button
                                                     onClick={() => setTeacherToDelete(teacher.id)}
                                                     className="text-red-500 hover:underline"
@@ -208,6 +219,8 @@ function Teachers() {
                     onCancel={() => setTeacherToDelete(null)}
                 />
             )}
+
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

@@ -45,10 +45,11 @@ function StudentForm({ student, onClose }) {
         try {
             if (student) {
                 await api.put(`/students/${student.id}`, formData);
+                onClose('Student updated successfully.');
             } else {
                 await api.post('/students', formData);
+                onClose('Student registered successfully.');
             }
-            onClose();
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong.');
         } finally {

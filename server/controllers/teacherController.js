@@ -139,6 +139,21 @@ const assignTeacherToClass = async (req, res) => {
     }
 };
 
+const getTeachersWithAccountStatus = async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+      SELECT t.*,
+        CASE WHEN u.id IS NOT NULL THEN 1 ELSE 0 END AS has_account
+      FROM teachers t
+      LEFT JOIN users u ON u.email = t.email
+      ORDER BY t.full_name ASC
+    `);
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     getAllTeachers,
     getTeacherById,
@@ -147,4 +162,5 @@ module.exports = {
     deleteTeacher,
     getClasses,
     assignTeacherToClass,
+    getTeachersWithAccountStatus,
 };

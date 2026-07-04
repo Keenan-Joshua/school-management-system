@@ -4,6 +4,8 @@ import AnnouncementForm from './AnnouncementForm';
 import ConfirmModal from '../../components/ConfirmModal';
 import Spinner from '../../components/Spinner';
 import { useLocation } from 'react-router-dom';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
 
 function Announcements() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -18,6 +20,7 @@ function Announcements() {
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [announcementToDelete, setAnnouncementToDelete] = useState(null);
     const [error, setError] = useState('');
+    const { toast, showToast, hideToast } = useToast();
 
     const fetchAnnouncements = async () => {
         try {
@@ -42,9 +45,10 @@ function Announcements() {
         try {
             await api.delete(`/announcements/${announcementToDelete}`);
             setAnnouncementToDelete(null);
+            showToast('Announcement deleted successfully.');
             fetchAnnouncements();
         } catch (err) {
-            alert(err.response?.data?.message || 'Delete failed.');
+            showToast(err.response?.data?.message || 'Delete failed.', 'error');
             setAnnouncementToDelete(null);
         }
     };
@@ -54,9 +58,10 @@ function Announcements() {
         setShowForm(true);
     };
 
-    const handleFormClose = () => {
+    const handleFormClose = (message) => {
         setSelectedAnnouncement(null);
         setShowForm(false);
+        if (message) showToast(message);
         fetchAnnouncements();
     };
 
@@ -161,6 +166,7 @@ function Announcements() {
                     onCancel={() => setAnnouncementToDelete(null)}
                 />
             )}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

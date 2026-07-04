@@ -97,6 +97,7 @@ function AdminDashboard() {
     const [promptClass, setPromptClass] = useState(null);
     const [postingAnnouncement, setPostingAnnouncement] = useState(false);
     const [announcementSent, setAnnouncementSent] = useState({});
+    const [todayIsNonSchoolDay, setTodayIsNonSchoolDay] = useState(null);
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -106,7 +107,8 @@ function AdminDashboard() {
                     api.get('/holidays/upcoming'),
                     api.get('/announcements'),
                 ]);
-                setMissingAttendance(attRes.data);
+                setMissingAttendance(attRes.data.missing || []);
+                setTodayIsNonSchoolDay(attRes.data.nonSchoolDay || null);
                 setUpcomingHolidays(holRes.data);
                 setAnnouncements(annRes.data.slice(0, 5));
             } catch (err) {
@@ -128,38 +130,43 @@ function AdminDashboard() {
                 <div className="bg-white rounded-xl border border-gray-200 p-5">
                     <h3 className="text-sm font-semibold text-gray-700 mb-1">Attendance — Today</h3>
                     <p className="text-xs text-gray-400 mb-4">Classes that have not yet recorded attendance</p>
-                    {missingAttendance.length > 0 && (
-                        <div className="flex justify-end mb-3">
-                            <button
-                                onClick={() => setPromptClass({ id: 'all', name: 'all missing classes' })}
-                                className="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded hover:bg-emerald-700"
-                            >
-                                Remind All
-                            </button>
-                        </div>
-                    )}
-                    {missingAttendance.length === 0 ? (
+
+                    {todayIsNonSchoolDay ? (
+                        <p className="text-sm text-gray-400 italic">{todayIsNonSchoolDay}</p>
+                    ) : missingAttendance.length === 0 ? (
                         <div className="flex items-center gap-2 text-emerald-600 text-sm">
                             <span>✓</span> All classes have submitted attendance today
                         </div>
                     ) : (
-                        <ul className="space-y-2">
-                            {missingAttendance.map(cls => (
-                                <li key={cls.id} className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-700">{cls.name}</span>
-                                    {announcementSent[cls.id] ? (
-                                        <span className="text-xs text-emerald-600">Reminder sent</span>
-                                    ) : (
-                                        <button
-                                            onClick={() => setPromptClass(cls)}
-                                            className="text-xs text-amber-600 hover:underline"
-                                        >
-                                            Remind teacher →
-                                        </button>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
+                        <>
+                            {missingAttendance.length > 0 && (
+                                <div className="flex justify-end mb-3">
+                                    <button
+                                        onClick={() => setPromptClass({ id: 'all', name: 'all missing classes' })}
+                                        className="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded hover:bg-emerald-700"
+                                    >
+                                        Remind All
+                                    </button>
+                                </div>
+                            )}
+                            <ul className="space-y-2">
+                                {missingAttendance.map(cls => (
+                                    <li key={cls.id} className="flex justify-between items-center text-sm">
+                                        <span className="text-gray-700">{cls.name}</span>
+                                        {announcementSent[cls.id] ? (
+                                            <span className="text-xs text-emerald-600">Reminder sent</span>
+                                        ) : (
+                                            <button
+                                                onClick={() => setPromptClass(cls)}
+                                                className="text-xs text-amber-600 hover:underline"
+                                            >
+                                                Remind teacher →
+                                            </button>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
                     )}
                 </div>
 
@@ -285,6 +292,8 @@ function TeacherDashboard() {
                     <p className="text-xs text-gray-400 mb-4">Your class attendance status for today</p>
                     {!attendanceStatus?.assigned ? (
                         <p className="text-sm text-gray-400">No class assigned to you yet.</p>
+                    ) : attendanceStatus.nonSchoolDay ? (
+                        <p className="text-sm text-gray-400 italic">{attendanceStatus.nonSchoolDay}</p>
                     ) : attendanceStatus.submitted ? (
                         <div className="flex items-center gap-2 text-emerald-600 text-sm">
                             <span>✓</span> Attendance submitted for {attendanceStatus.class_name}
@@ -337,8 +346,8 @@ function TeacherDashboard() {
                                 >
                                     <span className="text-gray-700">{h.description}</span>
                                     <span className="text-xs text-gray-400">
-        {new Date(h.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' })}
-      </span>
+                                        {new Date(h.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' })}
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -380,16 +389,19 @@ function ParentDashboard() {
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const [upcomingHolidays, setUpcomingHolidays] = useState([]);
 
     useEffect(() => {
         const fetchAll = async () => {
             try {
-                const [childRes, annRes] = await Promise.all([
+                const [childRes, annRes, holRes] = await Promise.all([
                     api.get('/parents/my-children'),
                     api.get('/announcements'),
+                    api.get('/holidays/upcoming'),
                 ]);
                 setChildren(childRes.data);
                 setAnnouncements(annRes.data.slice(0, 5));
+                setUpcomingHolidays(holRes.data);
                 if (childRes.data.length > 0) setSelectedChild(childRes.data[0]);
             } catch (err) {
                 console.error('Dashboard load error:', err);
@@ -503,6 +515,28 @@ function ParentDashboard() {
                                             <p className="text-xs text-gray-400 capitalize">
                                                 {a.audience} · {new Date(a.created_at).toLocaleDateString()}
                                             </p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                        {/* Upcoming Holidays */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-5">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-1">Upcoming Holidays</h3>
+                            <p className="text-xs text-gray-400 mb-4">Non-school days in the next period</p>
+                            {upcomingHolidays.length === 0 ? (
+                                <p className="text-sm text-gray-400">No upcoming holidays recorded.</p>
+                            ) : (
+                                <ul className="space-y-2">
+                                    {upcomingHolidays.map(h => (
+                                        <li
+                                            key={h.id}
+                                            className="flex justify-between items-center text-sm px-2 py-1"
+                                        >
+                                            <span className="text-gray-700">{h.description}</span>
+                                            <span className="text-xs text-gray-400">
+                                                {new Date(h.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' })}
+                                            </span>
                                         </li>
                                     ))}
                                 </ul>

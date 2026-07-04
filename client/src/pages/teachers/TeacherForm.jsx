@@ -36,8 +36,10 @@ function TeacherForm({ teacher, onClose }) {
         try {
             if (teacher) {
                 await api.put(`/teachers/${teacher.id}`, formData);
+                onClose('Teacher updated successfully.');
             } else {
                 await api.post('/teachers', formData);
+                onClose('Teacher registered successfully.');
             }
             onClose();
         } catch (err) {

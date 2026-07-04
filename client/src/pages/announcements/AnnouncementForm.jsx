@@ -32,8 +32,10 @@ function AnnouncementForm({ announcement, onClose }) {
         try {
             if (announcement) {
                 await api.put(`/announcements/${announcement.id}`, formData);
+                onClose('Announcement updated successfully.');
             } else {
                 await api.post('/announcements', formData);
+                onClose('Announcement posted successfully.');
             }
             onClose();
         } catch (err) {

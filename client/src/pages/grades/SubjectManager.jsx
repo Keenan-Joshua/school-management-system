@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import api from '../../services/api';
+import ConfirmModal from "../../components/ConfirmModal";
 
 function SubjectManager({ subjects, onUpdate }) {
     const [newSubject, setNewSubject] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [subjectToDelete, setSubjectToDelete] = useState(null);
 
     const handleAdd = async () => {
         if (!newSubject.trim()) return;
@@ -20,14 +22,15 @@ function SubjectManager({ subjects, onUpdate }) {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Delete this subject? This will also delete all associated grades.')) return;
+    const confirmDelete = async () => {
         try {
-            await api.delete(`/grades/subjects/${id}`);
+            await api.delete(`/grades/subjects/${subjectToDelete}`);
+            setSubjectToDelete(null);
             setMessage('Subject deleted.');
             onUpdate();
         } catch (err) {
             setError('Failed to delete subject.');
+            setSubjectToDelete(null);
         }
     };
 
@@ -62,7 +65,7 @@ function SubjectManager({ subjects, onUpdate }) {
                     >
             {s.name}
                         <button
-                            onClick={() => handleDelete(s.id)}
+                            onClick={() => setSubjectToDelete(s.id)}
                             className="text-red-400 hover:text-red-600 ml-1 font-bold"
                         >
               ×
@@ -70,6 +73,15 @@ function SubjectManager({ subjects, onUpdate }) {
           </span>
                 ))}
             </div>
+            {subjectToDelete && (
+                <ConfirmModal
+                    title="Delete Subject"
+                    message="Are you sure you want to delete this subject? All associated grades will also be permanently deleted."
+                    confirmLabel="Delete"
+                    onConfirm={confirmDelete}
+                    onCancel={() => setSubjectToDelete(null)}
+                />
+            )}
         </div>
     );
 }

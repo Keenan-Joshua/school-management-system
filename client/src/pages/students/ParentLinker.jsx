@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import QuickUserForm from '../../components/QuickUserForm';
+import ConfirmModal from '../../components/ConfirmModal';
 
 function ParentLinker({ studentId, guardianName, guardianContact }) {
     const [links, setLinks] = useState([]);
@@ -9,6 +10,7 @@ function ParentLinker({ studentId, guardianName, guardianContact }) {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [createAccountFor, setCreateAccountFor] = useState(null);
+    const [linkToRemove, setLinkToRemove] = useState(null);
 
     const fetchData = async () => {
         try {
@@ -42,13 +44,14 @@ function ParentLinker({ studentId, guardianName, guardianContact }) {
         }
     };
 
-    const handleUnlink = async (linkId) => {
-        if (!window.confirm('Remove this guardian from the student?')) return;
+    const confirmUnlink = async () => {
         try {
-            await api.delete(`/parents/link/${linkId}`);
+            await api.delete(`/parents/link/${linkToRemove}`);
+            setLinkToRemove(null);
             fetchData();
         } catch (err) {
             setError('Failed to unlink guardian.');
+            setLinkToRemove(null);
         }
     };
 
@@ -68,7 +71,7 @@ function ParentLinker({ studentId, guardianName, guardianContact }) {
                             <span>{link.full_name} ({link.email})</span>
                             <button
                                 type="button"
-                                onClick={() => handleUnlink(link.id)}
+                                onClick={() => setLinkToRemove(link.id)}
                                 className="text-red-500 hover:underline text-xs"
                             >
                                 Remove
@@ -128,6 +131,15 @@ function ParentLinker({ studentId, guardianName, guardianContact }) {
                         setCreateAccountFor(null);
                         fetchData();
                     }}
+                />
+            )}
+            {linkToRemove && (
+                <ConfirmModal
+                    title="Remove Guardian"
+                    message="Are you sure you want to remove this guardian link? They will no longer be able to view this student's records."
+                    confirmLabel="Remove"
+                    onConfirm={confirmUnlink}
+                    onCancel={() => setLinkToRemove(null)}
                 />
             )}
         </div>

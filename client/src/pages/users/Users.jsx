@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import UserForm from './UserForm';
 import Spinner from '../../components/Spinner';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
 
 function Users() {
     const [users, setUsers] = useState([]);
@@ -15,6 +17,7 @@ function Users() {
     const [resetError, setResetError] = useState('');
     const [resetSuccess, setResetSuccess] = useState('');
     const [resetLoading, setResetLoading] = useState(false);
+    const { toast, showToast, hideToast } = useToast();
 
     const filtered = users.filter(u => {
         const matchesSearch =
@@ -38,8 +41,9 @@ function Users() {
 
     useEffect(() => { fetchUsers(); }, []);
 
-    const handleFormClose = () => {
+    const handleFormClose = (message) => {
         setShowForm(false);
+        if (message) showToast(message);
         fetchUsers();
     };
 
@@ -201,6 +205,7 @@ function Users() {
                     </div>
                 </div>
             )}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

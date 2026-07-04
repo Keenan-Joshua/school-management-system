@@ -3,6 +3,8 @@ import api from '../../services/api';
 import SubjectManager from './SubjectManager';
 import ReportCard from './ReportCard';
 import Spinner from '../../components/Spinner';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
 
 function Grades() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -25,6 +27,7 @@ function Grades() {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [viewReportCard, setViewReportCard] = useState(null);
+    const { toast, showToast, hideToast } = useToast();
 
     useEffect(() => {
         const loadInitial = async () => {
@@ -99,7 +102,7 @@ function Grades() {
                     exam_score: s.exam_score,
                 })),
             });
-            setMessage('Grades submitted successfully.');
+            showToast('Grades submitted successfully.');
             // Reload to show calculated averages and grades
             const res = await api.get('/grades/class', {
                 params: {
@@ -111,7 +114,7 @@ function Grades() {
             });
             setStudents(res.data);
         } catch (err) {
-            setError(err.response?.data?.message || 'Submission failed.');
+            showToast(err.response?.data?.message || 'Submission failed.', 'error');
         } finally {
             setSubmitting(false);
         }
@@ -372,6 +375,7 @@ function Grades() {
                     onClose={() => setViewReportCard(null)}
                 />
             )}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

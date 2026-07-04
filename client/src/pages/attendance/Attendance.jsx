@@ -261,7 +261,7 @@ function Attendance() {
                 <Spinner message="Loading attendance..." />
             ) : students.length === 0 ? (
                 <p className="text-gray-400 text-sm">
-                    {selectedClass ? 'No students found in this class.' : 'Select a class to begin.'}
+                    {error ? '' : selectedClass ? 'No students found in this class.' : 'Select a class to begin.'}
                 </p>
             ) : (
                 <>

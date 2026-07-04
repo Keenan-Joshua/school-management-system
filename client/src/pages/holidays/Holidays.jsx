@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Spinner from '../../components/Spinner';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
+import ConfirmModal from "../../components/ConfirmModal";
+
 
 function Holidays() {
     const [holidays, setHolidays] = useState([]);
@@ -10,6 +14,8 @@ function Holidays() {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [endDate, setEndDate] = useState('');
+    const { toast, showToast, hideToast } = useToast();
+    const [holidayToDelete, setHolidayToDelete] = useState(null);
 
     const fetchHolidays = async () => {
         try {
@@ -30,7 +36,7 @@ function Holidays() {
         setMessage('');
         try {
             await api.post('/holidays', { date, end_date: endDate || date, description });
-            setMessage('Holiday added successfully.');
+            showToast('Holiday added successfully.', 'success');
             setDate('');
             setEndDate('');
             setDescription('');
@@ -40,13 +46,15 @@ function Holidays() {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Remove this holiday?')) return;
+    const confirmDelete = async () => {
         try {
-            await api.delete(`/holidays/${id}`);
+            await api.delete(`/holidays/${holidayToDelete}`);
+            setHolidayToDelete(null);
+            showToast('Holiday removed successfully.');
             fetchHolidays();
         } catch (err) {
-            setError('Failed to remove holiday.');
+            showToast('Failed to remove holiday.', 'error');
+            setHolidayToDelete(null);
         }
     };
 
@@ -80,7 +88,7 @@ function Holidays() {
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        End Date <span className="text-gray-400 font-normal">(optional — leave blank for single day)</span>
+                        End Date <span className="text-gray-400 font-normal">(Leave blank for single day)</span>
                     </label>
                     <input
                         type="date"
@@ -133,8 +141,8 @@ function Holidays() {
                                         year: 'numeric', month: 'long', day: 'numeric',
                                     })}
                                     {h.end_date && h.end_date !== h.date && (
-                                        <span className="text-gray-400">
-                                            {' '}— {new Date(h.end_date).toLocaleDateString('en-KE', {
+                                        <span className="text-gray-950">
+                                            {' '}- {new Date(h.end_date).toLocaleDateString('en-KE', {
                                             year: 'numeric', month: 'long', day: 'numeric',
                                             })}
                                         </span>
@@ -143,7 +151,7 @@ function Holidays() {
                                 <td className="px-4 py-3">{h.description}</td>
                                 <td className="px-4 py-3">
                                     <button
-                                        onClick={() => handleDelete(h.id)}
+                                        onClick={() => setHolidayToDelete(h.id)}
                                         className="text-red-500 hover:underline"
                                     >
                                         Remove
@@ -155,6 +163,17 @@ function Holidays() {
                     </tbody>
                 </table>
             </div>
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
+
+            {holidayToDelete && (
+                <ConfirmModal
+                    title="Remove Holiday"
+                    message="Are you sure you want to remove this holiday? Attendance tracking will no longer be blocked for this date."
+                    confirmLabel="Remove"
+                    onConfirm={confirmDelete}
+                    onCancel={() => setHolidayToDelete(null)}
+                />
+            )}
         </div>
     );
 }
