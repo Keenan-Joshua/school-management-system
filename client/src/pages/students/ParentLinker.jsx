@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import QuickUserForm from '../../components/QuickUserForm';
 
-function ParentLinker({ studentId }) {
+function ParentLinker({ studentId, guardianName, guardianContact }) {
     const [links, setLinks] = useState([]);
     const [parents, setParents] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [createAccountFor, setCreateAccountFor] = useState(null);
 
     const fetchData = async () => {
         try {
@@ -76,6 +78,24 @@ function ParentLinker({ studentId }) {
                 </ul>
             )}
 
+            {/* Create parent account from guardian details */}
+            <div className="flex justify-between items-center mb-2">
+        <span className="text-xs text-gray-500">
+          Link an existing parent account, or create one from guardian details:
+        </span>
+                <button
+                    type="button"
+                    onClick={() => setCreateAccountFor({
+                        full_name: guardianName,
+                        phone: guardianContact,
+                    })}
+                    className="text-xs text-emerald-600 hover:underline ml-2 whitespace-nowrap"
+                >
+                    + Create Parent Account
+                </button>
+            </div>
+
+            {/* Link existing parent dropdown */}
             <div className="flex gap-2">
                 <select
                     value={selectedParent}
@@ -95,6 +115,21 @@ function ParentLinker({ studentId }) {
                     Link
                 </button>
             </div>
+
+            {/* Quick user form modal */}
+            {createAccountFor && (
+                <QuickUserForm
+                    prefill={{
+                        full_name: createAccountFor.full_name,
+                        phone: createAccountFor.phone,
+                        role: 'parent',
+                    }}
+                    onClose={() => {
+                        setCreateAccountFor(null);
+                        fetchData();
+                    }}
+                />
+            )}
         </div>
     );
 }

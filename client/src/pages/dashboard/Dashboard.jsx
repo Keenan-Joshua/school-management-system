@@ -8,11 +8,16 @@ function AnnouncementPromptForm({ cls, onSent, onCancel }) {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 
+    const isAll = cls.id === 'all';
     const [title, setTitle] = useState(
-        `Attendance Reminder — ${cls.name}`
+        isAll
+            ? 'Attendance Reminder — All Classes'
+            : `Attendance Reminder — ${cls.name}`
     );
     const [body, setBody] = useState(
-        `This is a reminder to record attendance for ${cls.name} for today, ${today}. Please ensure this is completed as soon as possible.`
+        isAll
+            ? `This is a reminder to all class teachers who have not yet recorded attendance for today, ${today}. Please ensure this is completed as soon as possible.`
+            : `This is a reminder to record attendance for ${cls.name} for today, ${today}. Please ensure this is completed as soon as possible.`
     );
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -123,6 +128,16 @@ function AdminDashboard() {
                 <div className="bg-white rounded-xl border border-gray-200 p-5">
                     <h3 className="text-sm font-semibold text-gray-700 mb-1">Attendance — Today</h3>
                     <p className="text-xs text-gray-400 mb-4">Classes that have not yet recorded attendance</p>
+                    {missingAttendance.length > 0 && (
+                        <div className="flex justify-end mb-3">
+                            <button
+                                onClick={() => setPromptClass({ id: 'all', name: 'all missing classes' })}
+                                className="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded hover:bg-emerald-700"
+                            >
+                                Remind All
+                            </button>
+                        </div>
+                    )}
                     {missingAttendance.length === 0 ? (
                         <div className="flex items-center gap-2 text-emerald-600 text-sm">
                             <span>✓</span> All classes have submitted attendance today
@@ -164,8 +179,8 @@ function AdminDashboard() {
                                 >
                                     <span className="text-gray-700">{h.description}</span>
                                     <span className="text-xs text-gray-400">
-        {new Date(h.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' })}
-      </span>
+                                        {new Date(h.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' })}
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -210,7 +225,13 @@ function AdminDashboard() {
                         <AnnouncementPromptForm
                             cls={promptClass}
                             onSent={(classId) => {
-                                setAnnouncementSent(prev => ({ ...prev, [classId]: true }));
+                                if (classId === 'all') {
+                                    const allMarked = {};
+                                    missingAttendance.forEach(c => { allMarked[c.id] = true; });
+                                    setAnnouncementSent(allMarked);
+                                } else {
+                                    setAnnouncementSent(prev => ({ ...prev, [classId]: true }));
+                                }
                                 setPromptClass(null);
                             }}
                             onCancel={() => setPromptClass(null)}
@@ -312,8 +333,7 @@ function TeacherDashboard() {
                             {upcomingHolidays.map(h => (
                                 <li
                                     key={h.id}
-                                    onClick={() => navigate('/holidays')}
-                                    className="flex justify-between items-center text-sm cursor-pointer hover:bg-gray-50 rounded px-2 py-1 -mx-2 transition"
+                                    className="flex justify-between items-center text-sm px-2 py-1"
                                 >
                                     <span className="text-gray-700">{h.description}</span>
                                     <span className="text-xs text-gray-400">

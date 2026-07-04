@@ -9,6 +9,7 @@ function Holidays() {
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     const fetchHolidays = async () => {
         try {
@@ -28,9 +29,10 @@ function Holidays() {
         setError('');
         setMessage('');
         try {
-            await api.post('/holidays', { date, description });
+            await api.post('/holidays', { date, end_date: endDate || date, description });
             setMessage('Holiday added successfully.');
             setDate('');
+            setEndDate('');
             setDescription('');
             fetchHolidays();
         } catch (err) {
@@ -67,12 +69,24 @@ function Holidays() {
 
             <form onSubmit={handleAdd} className="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap gap-3 items-end">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                     <input
                         type="date"
                         value={date}
                         onChange={e => setDate(e.target.value)}
                         required
+                        className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        End Date <span className="text-gray-400 font-normal">(optional — leave blank for single day)</span>
+                    </label>
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={e => setEndDate(e.target.value)}
+                        min={date}
                         className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
@@ -118,6 +132,13 @@ function Holidays() {
                                     {new Date(h.date).toLocaleDateString('en-KE', {
                                         year: 'numeric', month: 'long', day: 'numeric',
                                     })}
+                                    {h.end_date && h.end_date !== h.date && (
+                                        <span className="text-gray-400">
+                                            {' '}— {new Date(h.end_date).toLocaleDateString('en-KE', {
+                                            year: 'numeric', month: 'long', day: 'numeric',
+                                            })}
+                                        </span>
+                                    )}
                                 </td>
                                 <td className="px-4 py-3">{h.description}</td>
                                 <td className="px-4 py-3">

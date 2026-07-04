@@ -138,7 +138,13 @@ function StudentForm({ student, onClose }) {
                         </button>
                     </div>
                 </form>
-                {student && <ParentLinker studentId={student.id} />}
+                {student && (
+                    <ParentLinker
+                        studentId={student.id}
+                        guardianName={student.guardian_name}
+                        guardianContact={student.guardian_contact}
+                    />
+                )}
             </div>
         </div>
     );

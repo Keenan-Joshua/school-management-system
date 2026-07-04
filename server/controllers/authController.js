@@ -72,10 +72,19 @@ const createUser = async (req, res) => {
 
         // Keep the teachers table in sync, since other modules rely on it directly
         if (role === 'teacher') {
-            await db.query(
-                'INSERT INTO teachers (full_name, email, phone, gender, date_joined) VALUES (?, ?, ?, ?, ?)',
-                [full_name, email, phone, gender, date_joined]
+            // Check if a teacher record already exists with this email
+            const [existingTeacher] = await db.query(
+                'SELECT id FROM teachers WHERE email = ?', [email]
             );
+
+            if (existingTeacher.length === 0) {
+                // No existing teacher record — create one
+                await db.query(
+                    'INSERT INTO teachers (full_name, email, phone, gender, date_joined) VALUES (?, ?, ?, ?, ?)',
+                    [full_name, email, phone, gender, date_joined]
+                );
+            }
+            // If teacher record already exists, skip insert — the email link is enough
         }
 
         res.status(201).json({ message: 'User account created successfully.' });

@@ -10,21 +10,31 @@ const getAllHolidays = async (req, res) => {
 };
 
 const createHoliday = async (req, res) => {
-    const { date, description } = req.body;
+    const { date, end_date, description } = req.body;
 
     if (!date || !description) {
         return res.status(400).json({ message: 'Date and description are required.' });
     }
 
+    // end_date defaults to date if not provided (single day)
+    const resolvedEndDate = end_date || date;
+
+    if (new Date(resolvedEndDate) < new Date(date)) {
+        return res.status(400).json({ message: 'End date cannot be before start date.' });
+    }
+
     try {
-        const [existing] = await db.query('SELECT id FROM holidays WHERE date = ?', [date]);
+        const [existing] = await db.query(
+            'SELECT id FROM holidays WHERE date = ? AND end_date = ?',
+            [date, resolvedEndDate]
+        );
         if (existing.length > 0) {
-            return res.status(400).json({ message: 'A holiday is already recorded for this date.' });
+            return res.status(400).json({ message: 'A holiday is already recorded for this period.' });
         }
 
         await db.query(
-            'INSERT INTO holidays (date, description) VALUES (?, ?)',
-            [date, description]
+            'INSERT INTO holidays (date, end_date, description) VALUES (?, ?, ?)',
+            [date, resolvedEndDate, description]
         );
         res.status(201).json({ message: 'Holiday added successfully.' });
     } catch (err) {
@@ -44,13 +54,17 @@ const deleteHoliday = async (req, res) => {
 // Used by the attendance module to validate a date before accepting submissions
 const isNonSchoolDay = async (dateStr) => {
     const date = new Date(dateStr);
-    const dayOfWeek = date.getUTCDay(); // 0 = Sunday, 6 = Saturday
+    const dayOfWeek = date.getUTCDay();
 
     if (dayOfWeek === 0 || dayOfWeek === 6) {
         return { blocked: true, reason: 'This date falls on a weekend.' };
     }
 
-    const [rows] = await db.query('SELECT description FROM holidays WHERE date = ?', [dateStr]);
+    const [rows] = await db.query(
+        'SELECT description FROM holidays WHERE ? BETWEEN date AND end_date',
+        [dateStr]
+    );
+
     if (rows.length > 0) {
         return { blocked: true, reason: `This date is marked as a holiday: ${rows[0].description}.` };
     }

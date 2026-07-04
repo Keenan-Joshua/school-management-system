@@ -5,6 +5,7 @@ import ClassAssignment from './ClassAssignment';
 import SubjectAssignment from './SubjectAssignment';
 import ConfirmModal from '../../components/ConfirmModal';
 import Spinner from '../../components/Spinner';
+import QuickUserForm from '../../components/QuickUserForm';
 
 function Teachers() {
     const [teachers, setTeachers] = useState([]);
@@ -14,6 +15,7 @@ function Teachers() {
     const [teacherToDelete, setTeacherToDelete] = useState(null);
     const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState('teachers');
+    const [createAccountFor, setCreateAccountFor] = useState(null);
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
 
@@ -151,6 +153,12 @@ function Teachers() {
                                                     Edit
                                                 </button>
                                                 <button
+                                                    onClick={() => setCreateAccountFor(teacher)}
+                                                    className="text-blue-500 hover:underline"
+                                                >
+                                                    Create Account
+                                                </button>
+                                                <button
                                                     onClick={() => setTeacherToDelete(teacher.id)}
                                                     className="text-red-500 hover:underline"
                                                 >
@@ -175,6 +183,20 @@ function Teachers() {
             {/* Subject Assignment tab */}
             {activeTab === 'subjects' && isAdmin && (
                 <SubjectAssignment />
+            )}
+
+            {createAccountFor && (
+                <QuickUserForm
+                    prefill={{
+                        full_name: createAccountFor.full_name,
+                        email: createAccountFor.email,
+                        phone: createAccountFor.phone,
+                        gender: createAccountFor.gender,
+                        date_joined: createAccountFor.date_joined?.split('T')[0],
+                        role: 'teacher',
+                    }}
+                    onClose={() => setCreateAccountFor(null)}
+                />
             )}
 
             {teacherToDelete && (

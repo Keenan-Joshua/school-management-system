@@ -124,6 +124,11 @@ function Announcements() {
                                         {new Date(a.created_at).toLocaleDateString('en-KE', {
                                             year: 'numeric', month: 'long', day: 'numeric',
                                         })}
+                                        {new Date(a.updated_at).getTime() - new Date(a.created_at).getTime() > 5000 && (
+                                            <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                                                Edited
+                                            </span>
+                                        )}
                                     </p>
                                 </div>
                                 {isAdmin && (

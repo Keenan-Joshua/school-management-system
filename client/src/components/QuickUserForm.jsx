@@ -1,18 +1,17 @@
 import { useState } from 'react';
-import api from '../../services/api';
+import api from '../services/api';
 
-function UserForm({ onClose }) {
+function QuickUserForm({ prefill = {}, onClose }) {
     const [formData, setFormData] = useState({
-        full_name: '',
-        email: '',
+        full_name: prefill.full_name || '',
+        email: prefill.email || '',
         password: '',
-        role: 'teacher',
-        phone: '',
-        gender: '',
-        date_joined: '',
+        role: prefill.role || 'parent',
+        phone: prefill.phone || '',
+        gender: prefill.gender || '',
+        date_joined: prefill.date_joined || '',
     });
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -22,9 +21,7 @@ function UserForm({ onClose }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setSuccess('');
         setLoading(true);
-
         try {
             await api.post('/auth/users', formData);
             onClose();
@@ -38,13 +35,15 @@ function UserForm({ onClose }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-screen">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Create User Account</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                    Create User Account
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">
+                    Details pre-filled from existing records. Set a temporary password.
+                </p>
 
                 {error && (
                     <div className="bg-red-100 text-red-700 px-4 py-2 rounded text-sm mb-4">{error}</div>
-                )}
-                {success && (
-                    <div className="bg-green-100 text-green-700 px-4 py-2 rounded text-sm mb-4">{success}</div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,7 +72,9 @@ function UserForm({ onClose }) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Temporary Password</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Temporary Password
+                        </label>
                         <input
                             type="text"
                             name="password"
@@ -88,28 +89,22 @@ function UserForm({ onClose }) {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                        <select
-                            name="role"
+                        <input
+                            type="text"
                             value={formData.role}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        >
-                            <option value="teacher">Teacher</option>
-                            <option value="parent">Parent</option>
-                            <option value="administrator">Administrator</option>
-                        </select>
+                            disabled
+                            className="w-full border border-gray-200 bg-gray-50 rounded px-3 py-2 text-sm text-gray-500 capitalize"
+                        />
                     </div>
 
                     {formData.role === 'teacher' && (
                         <>
-                            <div className="border-t border-gray-200 pt-4">
-                                <p className="text-xs text-gray-500 mb-3">
-                                    Additional details required for teacher accounts:
-                                </p>
+                            <div className="border-t border-gray-200 pt-3">
+                                <p className="text-xs text-gray-400 mb-3">Teacher details pre-filled — update if needed:</p>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                                 <input
                                     type="text"
                                     name="phone"
@@ -155,7 +150,7 @@ function UserForm({ onClose }) {
                             onClick={onClose}
                             className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
                         >
-                            Close
+                            Cancel
                         </button>
                         <button
                             type="submit"
@@ -171,4 +166,4 @@ function UserForm({ onClose }) {
     );
 }
 
-export default UserForm;
+export default QuickUserForm;
