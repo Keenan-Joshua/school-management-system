@@ -181,6 +181,45 @@ const adminResetPassword = async (req, res) => {
     }
 };
 
+const deleteUser = async (req, res) => {
+    const userId = parseInt(req.params.id, 10);
+
+    if (Number.isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user id.' });
+    }
+
+    try {
+        // 1) Ensure the user exists and fetch role
+        const [rows] = await db.query('SELECT id, role FROM users WHERE id = ?', [userId]);
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // 2) Safety: prevent deleting your own account
+        if (req.user.id === userId) {
+            return res.status(400).json({ message: 'You cannot delete your own account.' });
+        }
+
+        // 3) Safety: ensure we don’t remove the last administrator
+        if (rows[0].role === 'administrator') {
+            const [adminCount] = await db.query("SELECT COUNT(*) AS count FROM users WHERE role = 'administrator'");
+            if (adminCount[0].count <= 1) {
+                return res.status(400).json({ message: 'Cannot delete the last administrator.' });
+            }
+        }
+
+        // 4) Perform deletion
+        await db.query('DELETE FROM users WHERE id = ?', [userId]);
+
+        // Note: We’re not deleting any related teacher/parent domain records here.
+        // If you need to unlink or cleanup related data, add that here.
+
+        return res.json({ message: 'User deleted successfully.' });
+    } catch (err) {
+        return res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     register,
     checkSetupStatus,
@@ -189,4 +228,5 @@ module.exports = {
     resetPassword,
     adminResetPassword,
     getAllUsers,
+    deleteUser,
 };

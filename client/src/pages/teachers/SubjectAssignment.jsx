@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 function SubjectAssignment() {
     const [assignments, setAssignments] = useState([]);
@@ -10,6 +13,8 @@ function SubjectAssignment() {
     const [formData, setFormData] = useState({ teacher_id: '', subject_id: '', class_id: '' });
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const { toast, showToast, hideToast } = useToast();
+    const [ subjectAssignmentToDelete, setSubjectAssignmentToDelete ] = useState(null );
 
     const fetchData = async () => {
         try {
@@ -42,11 +47,11 @@ function SubjectAssignment() {
         setMessage('');
         try {
             await api.post('/teacher-subjects', formData);
-            setMessage('Subject assigned successfully.');
+            showToast('Subject assigned successfully.', 'success');
             setFormData({ teacher_id: '', subject_id: '', class_id: '' });
             fetchData();
         } catch (err) {
-            setError(err.response?.data?.message || 'Assignment failed.');
+            showToast(err.response?.data?.message || 'Assignment failed.', 'error');
         }
     };
 
@@ -55,20 +60,22 @@ function SubjectAssignment() {
         setMessage('');
         try {
             await api.put(`/teacher-subjects/${id}`, { teacher_id });
-            setMessage('Assignment updated successfully.');
+            showToast('Assignment updated successfully.', 'success');
             fetchData();
         } catch (err) {
-            setError('Failed to update assignment.');
+            showToast('Failed to update assignment.', 'error');
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Remove this subject assignment?')) return;
         try {
             await api.delete(`/teacher-subjects/${id}`);
+            setSubjectAssignmentToDelete(null);
+            showToast('Subject assignment removed successfully.', 'success');
             fetchData();
         } catch (err) {
-            setError('Failed to remove assignment.');
+            showToast('Failed to remove assignment.', 'error');
+            setSubjectAssignmentToDelete(null);
         }
     };
 
@@ -177,7 +184,7 @@ function SubjectAssignment() {
                                 </td>
                                 <td className="px-4 py-3">
                                     <button
-                                        onClick={() => handleDelete(a.id)}
+                                        onClick={() => setSubjectAssignmentToDelete(a.id)}
                                         className="text-red-500 hover:underline"
                                     >
                                         Remove
@@ -189,6 +196,18 @@ function SubjectAssignment() {
                     </tbody>
                 </table>
             </div>
+
+            {subjectAssignmentToDelete && (
+            <ConfirmModal
+                title="Remove Subject Assignment"
+                message="Are you sure you want to remove this subject assignment?"
+                confirmLabel="Remove"
+                onConfirm={handleDelete}
+                onCancel={() => setSubjectAssignmentToDelete(null)}
+            />
+            )}
+
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

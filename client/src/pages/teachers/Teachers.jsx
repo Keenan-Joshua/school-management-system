@@ -24,7 +24,7 @@ function Teachers() {
 
     const fetchTeachers = async () => {
         try {
-            const res = await api.get('/teachers');
+            const res = await api.get('/teachers/with-status');
             setTeachers(res.data);
         } catch (err) {
             console.error('Failed to fetch teachers:', err);
@@ -157,6 +157,16 @@ function Teachers() {
                                                 >
                                                     Edit
                                                 </button>
+
+                                                {/*teacher.has_account && (
+                                                    <span className="text-xs text-gray-400">Account exists</span>
+                                                )*/}
+                                                <button
+                                                    onClick={() => setTeacherToDelete(teacher.id)}
+                                                    className="text-red-500 hover:underline"
+                                                >
+                                                    Delete
+                                                </button>
                                                 {!teacher.has_account && (
                                                     <button
                                                         onClick={() => setCreateAccountFor(teacher)}
@@ -165,16 +175,6 @@ function Teachers() {
                                                         Create Account
                                                     </button>
                                                 )}
-
-                                                {teacher.has_account && (
-                                                    <span className="text-xs text-gray-400">Account exists</span>
-                                                )}
-                                                <button
-                                                    onClick={() => setTeacherToDelete(teacher.id)}
-                                                    className="text-red-500 hover:underline"
-                                                >
-                                                    Delete
-                                                </button>
                                             </td>
                                         )}
                                     </tr>
@@ -207,6 +207,10 @@ function Teachers() {
                         role: 'teacher',
                     }}
                     onClose={() => setCreateAccountFor(null)}
+                    onSuccess={() => {
+                        showToast('Account created successfully.', 'success');
+                        fetchTeachers();
+                    }}
                 />
             )}
 

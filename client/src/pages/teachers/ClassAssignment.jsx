@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
 
 function ClassAssignment() {
     const [classes, setClasses] = useState([]);
@@ -8,6 +10,7 @@ function ClassAssignment() {
     const [saving, setSaving] = useState(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const { toast, showToast, hideToast } = useToast();
 
     const fetchData = async () => {
         try {
@@ -33,10 +36,10 @@ function ClassAssignment() {
 
         try {
             const res = await api.put(`/teachers/classes/${class_id}/assign`, { teacher_id });
-            setMessage(res.data.message);
+            showToast(res.data.message, 'success');
             fetchData();
         } catch (err) {
-            setError(err.response?.data?.message || 'Assignment failed.');
+            showToast(err.response?.data?.message || 'Assignment failed.', 'error');
         } finally {
             setSaving(null);
         }
@@ -73,7 +76,7 @@ function ClassAssignment() {
                         <tr key={cls.id} className="hover:bg-gray-50">
                             <td className="px-4 py-3 font-medium">{cls.name}</td>
                             <td className="px-4 py-3 text-gray-500">
-                                {cls.teacher_name || '— Unassigned'}
+                                {cls.teacher_name || 'Unassigned'}
                             </td>
                             <td className="px-4 py-3">
                                 <div className="flex items-center gap-2">
@@ -83,7 +86,7 @@ function ClassAssignment() {
                                         disabled={saving === cls.id}
                                         className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                     >
-                                        <option value="">— Unassign —</option>
+                                        <option value=""> Unassign </option>
                                         {teachers.map(t => (
                                             <option key={t.id} value={t.id}>
                                                 {t.full_name}
@@ -100,6 +103,7 @@ function ClassAssignment() {
                     </tbody>
                 </table>
             </div>
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

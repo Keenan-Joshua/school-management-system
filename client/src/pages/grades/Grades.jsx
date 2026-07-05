@@ -102,7 +102,7 @@ function Grades() {
                     exam_score: s.exam_score,
                 })),
             });
-            showToast('Grades submitted successfully.');
+            showToast('Grades submitted successfully.', 'success');
             // Reload to show calculated averages and grades
             const res = await api.get('/grades/class', {
                 params: {
@@ -231,7 +231,7 @@ function Grades() {
                             <option value="">Select class & subject</option>
                             {teacherAssignments.map(a => (
                                 <option key={a.id} value={`${a.class_id}-${a.subject_id}`}>
-                                    {a.class_name} — {a.subject_name}
+                                    {a.class_name} - {a.subject_name}
                                 </option>
                             ))}
                         </select>

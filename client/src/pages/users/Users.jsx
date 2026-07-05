@@ -4,6 +4,7 @@ import UserForm from './UserForm';
 import Spinner from '../../components/Spinner';
 import Toast from '../../components/Toast';
 import useToast from '../../hooks/useToast';
+import ConfirmModal from "../../components/ConfirmModal";
 
 function Users() {
     const [users, setUsers] = useState([]);
@@ -18,12 +19,13 @@ function Users() {
     const [resetSuccess, setResetSuccess] = useState('');
     const [resetLoading, setResetLoading] = useState(false);
     const { toast, showToast, hideToast } = useToast();
+    const [deletingId, setDeletingId] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const filtered = users.filter(u => {
         const matchesSearch =
             u.full_name.toLowerCase().includes(search.toLowerCase()) ||
-            u.email.toLowerCase().includes(search.toLowerCase()) ||
-            u.role.toLowerCase().includes(search.toLowerCase());
+            u.email.toLowerCase().includes(search.toLowerCase());
         const matchesRole = selectedRole === '' || u.role === selectedRole;
         return matchesSearch && matchesRole;
     });
@@ -46,6 +48,21 @@ function Users() {
         if (message) showToast(message);
         fetchUsers();
     };
+
+    const handleDelete = async () => {
+        if (!deletingId) return;
+        setDeleteLoading(true);
+        try {
+            await api.delete(`/auth/users/${deletingId}`);
+            showToast('User deleted successfully.', 'success');
+            setDeletingId(null);
+            fetchUsers();
+        } catch (err) {
+            const msg = err.response?.data?.message || 'Failed to delete user.';
+            showToast(msg, 'error');
+            setDeleteLoading(false);
+        }
+    }
 
     const roleBadge = (role) => {
         if (role === 'administrator') return 'bg-purple-100 text-purple-700';
@@ -76,7 +93,7 @@ function Users() {
             <div className="flex gap-3 mb-4">
                 <input
                     type="text"
-                    placeholder="Search by name, email or role..."
+                    placeholder="Search by name or email..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -126,7 +143,7 @@ function Users() {
                             <td className="px-4 py-3 text-gray-500">
                                 {new Date(u.created_at).toLocaleDateString()}
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-3 flex gap-2">
                                 <button
                                     onClick={() => {
                                         setResetUserId(u.id);
@@ -137,6 +154,12 @@ function Users() {
                                     className="text-amber-600 hover:underline text-sm"
                                 >
                                     Reset Password
+                                </button>
+                                <button
+                                    onClick={() => setDeletingId(u.id)}
+                                    className="text-red-600 hover:underline text-sm"
+                                    >
+                                    Delete
                                 </button>
                             </td>
                         </tr>
@@ -163,7 +186,7 @@ function Users() {
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-1">New Temporary Password</label>
                             <input
-                                type="text"
+                                type="password"
                                 value={resetPassword}
                                 onChange={e => setResetPassword(e.target.value)}
                                 placeholder="Minimum 6 characters"
@@ -191,6 +214,8 @@ function Users() {
                                         });
                                         setResetSuccess(res.data.message);
                                         setResetPassword('');
+                                        showToast(res.data.message || 'Password reset successfully', 'success');
+                                        setResetUserId(null); // closes modal
                                     } catch (err) {
                                         setResetError(err.response?.data?.message || 'Reset failed.');
                                     } finally {
@@ -206,6 +231,17 @@ function Users() {
                 </div>
             )}
             {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
+
+            {deletingId && (
+                <ConfirmModal
+                title="Delete User"
+                message="Are you sure you want to delete this user account? This action cannot be undone."
+                confirmLabel={deleteLoading ? 'Deleting...' : 'Delete'}
+                onConfirm={handleDelete}
+                onCancel={() => setDeletingId(null)}
+                />
+            )}
+
         </div>
     );
 }

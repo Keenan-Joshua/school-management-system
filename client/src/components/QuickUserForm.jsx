@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../services/api';
 
-function QuickUserForm({ prefill = {}, onClose }) {
+function QuickUserForm({ prefill = {}, onClose, onSuccess }) {
     const [formData, setFormData] = useState({
         full_name: prefill.full_name || '',
         email: prefill.email || '',
@@ -25,6 +25,7 @@ function QuickUserForm({ prefill = {}, onClose }) {
         try {
             await api.post('/auth/users', formData);
             onClose();
+            onSuccess();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to create account.');
         } finally {
@@ -76,7 +77,7 @@ function QuickUserForm({ prefill = {}, onClose }) {
                             Temporary Password
                         </label>
                         <input
-                            type="text"
+                            type="password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}

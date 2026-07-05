@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import api from '../../services/api';
 import ConfirmModal from "../../components/ConfirmModal";
+import Toast from '../../components/Toast';
+import useToast from '../../hooks/useToast';
 
 function SubjectManager({ subjects, onUpdate }) {
     const [newSubject, setNewSubject] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [subjectToDelete, setSubjectToDelete] = useState(null);
+    const { toast, showToast, hideToast } = useToast();
 
     const handleAdd = async () => {
         if (!newSubject.trim()) return;
@@ -15,10 +18,10 @@ function SubjectManager({ subjects, onUpdate }) {
         try {
             await api.post('/grades/subjects', { name: newSubject.trim() });
             setNewSubject('');
-            setMessage('Subject added.');
+            showToast('Subject added.', 'success');
             onUpdate();
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to add subject.');
+            showToast(err.response?.data?.message || 'Failed to add subject.', 'error');
         }
     };
 
@@ -26,10 +29,10 @@ function SubjectManager({ subjects, onUpdate }) {
         try {
             await api.delete(`/grades/subjects/${subjectToDelete}`);
             setSubjectToDelete(null);
-            setMessage('Subject deleted.');
+            showToast('Subject deleted.', 'success');
             onUpdate();
         } catch (err) {
-            setError('Failed to delete subject.');
+            showToast('Failed to delete subject.', 'error');
             setSubjectToDelete(null);
         }
     };
@@ -82,6 +85,7 @@ function SubjectManager({ subjects, onUpdate }) {
                     onCancel={() => setSubjectToDelete(null)}
                 />
             )}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
 }

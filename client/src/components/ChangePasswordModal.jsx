@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import api from '../services/api';
+import Toast from './Toast';
+import useToast from "../hooks/useToast";
 
 function ChangePasswordModal({ onClose }) {
     const [formData, setFormData] = useState({
@@ -9,6 +11,7 @@ function ChangePasswordModal({ onClose }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const {toast, showToast, hideToast} = useToast();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,8 +34,9 @@ function ChangePasswordModal({ onClose }) {
         setLoading(true);
         try {
             await api.put('/auth/reset-password', { new_password: formData.new_password });
-            setSuccess('Password changed successfully.');
             setFormData({ new_password: '', confirm_password: '' });
+            showToast('Password changed successfully.', 'success');
+            onClose();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to change password.');
         } finally {
@@ -97,6 +101,7 @@ function ChangePasswordModal({ onClose }) {
                     </div>
                 </form>
             </div>
+            {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} /> }
         </div>
     );
 }
