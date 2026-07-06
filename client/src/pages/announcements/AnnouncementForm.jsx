@@ -1,14 +1,25 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 
-function AnnouncementForm({ announcement, onClose }) {
+function AnnouncementForm({ announcement, onClose, currentUser }) {
+    const isTeacher = currentUser?.role === 'teacher';
+    const [classes, setClasses] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
         body: '',
-        audience: 'all',
+        audience: isTeacher ? 'parents' : 'all',
+        class_id: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (isTeacher) {
+            api.get('/teachers/my-classes')
+                .then(({ data }) => setClasses(data))
+                .catch(() => setClasses([]));
+        }
+    }, [isTeacher]);
 
     useEffect(() => {
         if (announcement) {
@@ -16,6 +27,7 @@ function AnnouncementForm({ announcement, onClose }) {
                 title: announcement.title,
                 body: announcement.body,
                 audience: announcement.audience,
+                class_id: announcement.class_id ?? ''
             });
         }
     }, [announcement]);
@@ -28,18 +40,23 @@ function AnnouncementForm({ announcement, onClose }) {
         e.preventDefault();
         setError('');
         setLoading(true);
-
         try {
+            const payload = { ...formData };
+            // Enforce class when teacher posts to parents
+            if (isTeacher) {
+                payload.audience = 'parents';
+                if (!payload.class_id) throw new Error('Please select a class.');
+            }
+
             if (announcement) {
-                await api.put(`/announcements/${announcement.id}`, formData);
+                await api.put(`/announcements/${announcement.id}`, payload);
                 onClose('Announcement updated successfully.');
             } else {
-                await api.post('/announcements', formData);
+                await api.post('/announcements', payload);
                 onClose('Announcement posted successfully.');
             }
-            onClose();
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong.');
+            setError(err.response?.data?.message || err.message || 'Something went wrong.');
         } finally {
             setLoading(false);
         }
@@ -85,19 +102,31 @@ function AnnouncementForm({ announcement, onClose }) {
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Audience</label>
-                        <select
-                            name="audience"
-                            value={formData.audience}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        >
-                            <option value="all">Everyone</option>
-                            <option value="teachers">Teachers Only</option>
-                            <option value="parents">Parents Only</option>
-                        </select>
-                    </div>
+                    {!isTeacher && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Audience</label>
+                            <select
+                                name="audience"
+                                value={formData.audience}
+                                onChange={handleChange}
+                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            >
+                                <option value="all">Everyone</option>
+                                <option value="teachers">Teachers Only</option>
+                                <option value="parents">Parents Only</option>
+                            </select>
+                        </div>
+                    )}
+
+                    {isTeacher && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Class</label>
+                            <select name="class_id" value={formData.class_id} onChange={handleChange} required className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="">Select class</option>
+                                {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                        </div>
+                    )}
 
                     <div className="flex justify-end gap-3 pt-2">
                         <button

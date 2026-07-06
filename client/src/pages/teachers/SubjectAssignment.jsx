@@ -72,7 +72,7 @@ function SubjectAssignment() {
             await api.delete(`/teacher-subjects/${id}`);
             setSubjectAssignmentToDelete(null);
             showToast('Subject assignment removed successfully.', 'success');
-            fetchData();
+            await fetchData();
         } catch (err) {
             showToast('Failed to remove assignment.', 'error');
             setSubjectAssignmentToDelete(null);
@@ -202,7 +202,7 @@ function SubjectAssignment() {
                 title="Remove Subject Assignment"
                 message="Are you sure you want to remove this subject assignment?"
                 confirmLabel="Remove"
-                onConfirm={handleDelete}
+                onConfirm={() => handleDelete(subjectAssignmentToDelete)}
                 onCancel={() => setSubjectAssignmentToDelete(null)}
             />
             )}

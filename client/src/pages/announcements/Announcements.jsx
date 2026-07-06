@@ -10,6 +10,7 @@ import useToast from '../../hooks/useToast';
 function Announcements() {
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'administrator';
+    const isTeacher = user?.role === 'teacher';
     const location = useLocation();
     const highlightId = location.state?.highlightId;
     const highlightRef = useRef(null);
@@ -78,12 +79,12 @@ function Announcements() {
         <div className="p-8">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-700">School Announcements</h2>
-                {isAdmin && (
+                {(isAdmin || isTeacher) && (
                     <button
                         onClick={() => setShowForm(true)}
                         className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 text-sm"
                     >
-                        + New Announcement
+                        {isAdmin ? '+ New Announcement' : '+ New Class Announcement'}
                     </button>
                 )}
             </div>
@@ -96,6 +97,7 @@ function Announcements() {
                 <AnnouncementForm
                     announcement={selectedAnnouncement}
                     onClose={handleFormClose}
+                    currentUser={user}
                 />
             )}
 

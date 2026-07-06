@@ -11,7 +11,7 @@ const {
 router.use(verifyToken);
 
 router.get('/', getAnnouncements);
-router.post('/', verifyRole('administrator'), createAnnouncement);
+router.post('/', verifyRole('administrator', 'teacher'), createAnnouncement);
 router.put('/:id', verifyRole('administrator'), updateAnnouncement);
 router.delete('/:id', verifyRole('administrator'), deleteAnnouncement);
 

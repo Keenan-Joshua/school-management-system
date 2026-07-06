@@ -154,6 +154,27 @@ const getTeachersWithAccountStatus = async (req, res) => {
     }
 };
 
+const getMyClasses = async (req, res) => {
+    try {
+        const [teacherRows] = await db.query(`
+      SELECT t.id FROM teachers t JOIN users u ON u.email = t.email WHERE u.id = ?
+    `, [req.user.id]);
+        if (teacherRows.length === 0) return res.status(403).json({ message: 'Teacher profile not found.' });
+
+        const teacher_id = teacherRows[0].id;
+        const [rows] = await db.query(`
+      SELECT c.id, c.name
+      FROM classes c
+      WHERE c.teacher_id = ?
+      ORDER BY c.name ASC
+    `, [teacher_id]);
+
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.', error: err.message });
+    }
+};
+
 module.exports = {
     getAllTeachers,
     getTeacherById,
@@ -161,6 +182,7 @@ module.exports = {
     updateTeacher,
     deleteTeacher,
     getClasses,
+    getMyClasses,
     assignTeacherToClass,
     getTeachersWithAccountStatus,
 };

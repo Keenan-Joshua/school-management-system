@@ -8,6 +8,7 @@ const {
     updateTeacher,
     deleteTeacher,
     getClasses,
+    getMyClasses,
     assignTeacherToClass,
     getTeachersWithAccountStatus,
 } = require('../controllers/teacherController');
@@ -17,6 +18,7 @@ router.use(verifyToken);
 router.get('/with-status', getTeachersWithAccountStatus);
 router.get('/classes', getClasses);
 router.get('/', getAllTeachers);
+router.get('/my-classes', verifyRole('teacher'), getMyClasses);
 router.get('/:id', getTeacherById);
 
 router.post('/', verifyRole('administrator'), createTeacher);
